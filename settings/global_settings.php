@@ -2,7 +2,7 @@
 
 #echo getcwd();
  
-define('SITE_URL', 'http://banci-info.loc/');
+define('SITE_URL', 'http://banci-old.loc/');
 define('SITE_DIR', '/Users/nicuguliman/funserver/banci-info/');
 
   
