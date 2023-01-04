@@ -1,6 +1,8 @@
 .idea/
 /pics/
 /banner/
+/_old/pics/
+/_old/banner/
 README.md
 LICENSE
 test.php
