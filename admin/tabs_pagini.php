@@ -1,0 +1,9 @@
+<table width="500" align="center" cellpadding="5" cellspacing="1"  >
+ <tr>
+  <td height="30" colspan="2" align="center"    class="titlu_header" style="border-bottom:2px solid #ccc;">
+<? if($_SESSION[tab]==1 or $_GET[id_page]<>'') {?> <a href="<?=$scr?>?section=<?=$mnp1?>_5&tab=1&id_page=<?=$_GET[id_page]?>" <? if($_SESSION[tab]<>1) {?>class="but" <? } else {?>class="but_pres" <? } ?>  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;General&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> <? } else { ?><span class="but_pres"  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;General&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <? }?> 
+<? if($_SESSION[tab]==2 or $_GET[id_page]<>'' ) {?> <a href="<?=$scr?>?section=<?=$mnp1?>_6&tab=2&id_page=<?=$_GET[id_page]?>"  <? if($_SESSION[tab]<>2) {?>class="but" <? } else {?>class="but_pres" <? } ?>  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Imagini&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> <? } else { ?><span class="but_pres"  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Imagini&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <? }?> 
+<? if($_SESSION[tab]==3 or $_GET[id_page]<>'') {?> <a href="<?=$scr?>?section=<?=$mnp1?>_7&tab=3&id_page=<?=$_GET[id_page]?>"  <? if($_SESSION[tab]<>3) {?>class="but" <? } else {?>class="but_pres" <? } ?>  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fisiere&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> <? } else { ?><span class="but_pres"  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fisiere&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <? }?> 
+</td>
+ </tr>
+</table>

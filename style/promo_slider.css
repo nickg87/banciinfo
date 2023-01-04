@@ -1,0 +1,113 @@
+	SLIDER
+*/
+.slider-wrap {
+	width:495px;
+	position:absolute;
+	top:0px;
+	left:0px;
+	}			
+
+.stripViewer .panelContainer 
+
+.panel ul {
+	text-align:left;
+	margin:0 15px 0 30px;
+	}
+
+.stripViewer {
+	position:relative;
+	overflow:hidden;
+	width:495px;
+	height:200px;
+	}
+
+.stripViewer .panelContainer {
+	position:relative;
+	left:0;
+	top:0;
+	}
+
+.stripViewer .panelContainer .panel {
+	float:left;
+	height:100%;
+	position:relative;
+	width:495px;
+	}
+
+.stripNavL, .stripNavR, .stripNav {
+	display:none;
+	}
+
+#main-photo-slider {
+	width:495px;
+	height:200px;
+	overflow:hidden;
+	}
+
+#movers-row {
+	margin: 0px 0 0 20px;
+	}
+
+#movers-row div {
+	width:5%;
+	float:left;
+	height:10px;
+	text-align:left;
+	}
+
+#movers-row div a.cross-link {
+	float:right;
+	}
+
+.photo-meta-data {
+	background:url(images/promo/transpBlack.png);
+	padding-left:10px;
+	height: 43px;
+	font-family:trebuchet MS;
+	margin-top:-55px;
+	position:relative;
+	z-index:9999;
+	color:#000000;
+	}
+
+.photo-meta-data span {
+	font-size:13px;
+	font-family:trebuchet MS;
+	color:#000000;
+	}
+
+.cross-link {
+	display:block;
+	width:27px;
+	height:26px;
+	margin-top:-36px;
+	margin-right:-15px;
+	position: relative;
+	padding-top:10px;
+	z-index:9999;
+	background-image:url(images/promo/bk_123.png);
+	color:#0080ff;
+	background-repeat:no-repeat;
+	background-position:center top;
+
+	}
+											  
+.nav-thumb {
+	display:block;
+	width:10px;
+	height:20px;
+	margin-left:8px;
+	margin-right:15px;
+	text-align:center;
+	margin-top:-5px;
+	font-family:Arial;
+	font-size:12px;
+	font-weight:bold;
+	}
+
+.active-thumb {
+	color:#000000;
+	background-image:url(images/promo/bk_123_h.png);
+	background-position:center top;
+	background-repeat:no-repeat;
+	}

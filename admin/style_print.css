@@ -1,0 +1,78 @@
+ 
+ .denumire{
+ font-family: trebuchet ms, tahoma, verdana, arial;
+	font-size: 21px;
+	font-weight: bold;
+	letter-spacing:3px;
+	color: #000000;
+ 	 
+}
+ .content{
+ font-family:  verdana;
+	font-size: 11px;
+	font-weight: normal;
+	color: #000000;
+ 	 
+}
+
+.buton {
+background-color: #3173A0;
+color:#FFFFFF;
+font-weight:bold;
+}
+
+  
+.t {
+	border: 1px solid #990000;
+}
+
+a {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #37395A;
+	text-decoration: underline;
+}
+
+a:hover {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #37395A;
+	text-decoration: none;
+}
+ 
+.titlu{
+	font-family: ARIAL;
+	font-size: 14px;
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
+	line-height:16px;
+	
+}
+
+ 
+ 
+
+.menu_cat {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: none;
+}
+.menu_cat:hover {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: none;
+}
+
+
+.white {
+	 
+	color: #ffffff;
+	text-decoration:none;
+}

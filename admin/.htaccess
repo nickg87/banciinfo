@@ -1,0 +1,7 @@
+RewriteEngine Off
+
+ 
+AuthType Basic
+AuthName "admin"
+AuthUserFile "/home/bancii/.htpasswds/public_html/admin/passwd"
+require valid-user

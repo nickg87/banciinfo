@@ -1,0 +1,292 @@
+ 
+ .headline a {
+	font-family:arial;
+	font-size:16px;
+	color:#666666;
+	font-weight:bold;
+	text-decoration:none;	
+	}
+ .headline a:hover {
+	font-family:arial;
+	font-size:16px;
+	color:#666666;
+	font-weight:bold;	
+	}
+
+.small_text {
+	font-family:arial;
+	font-size:11px;
+	color:#666666;
+	font-weight:normal;	
+	}
+
+
+input, textarea  {
+	color: #000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
+
+input[type="text"], input[type="password"], input[type="file"], textarea {
+	padding: 2px 4px;
+	border: 1px solid #cccccc;
+}
+
+input[type="text"], input[type="password"], input[type="file"], input[type="radio"], input[type="checkbox"], textarea, select, option {
+	background-color: white;
+}
+
+select {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:10px;
+	border: 1px solid #efefef;
+}
+
+input:focus, textarea:focus {
+	background-color: #f8f8f8;
+}
+
+
+
+td, p, body {
+	font-family: tahoma;
+	font-size: 11px;
+	font-weight: normal;
+	color: #081E1F;
+	
+}
+ 
+
+th {
+	font-family: tahoma;
+	font-size: 12px;
+	font-weight: bold;
+	color: #081E1F;
+	 
+}
+
+
+.content_white {
+	font-family: tahoma;
+	font-size: 11px;
+	font-weight: none;
+	color: #ffffff;
+	 
+}
+
+.content {
+	font-family:arial;
+	font-size:14px;
+	color:#000000;
+	line-height:140%;
+	}
+
+
+
+
+.t {
+	border: 1px solid #CDD5F6;
+}
+
+
+.titlu {
+	font-family: arial;
+	font-size: 15px;
+	font-weight: normal;
+	color: #0a6384;
+	 
+}
+
+.titlu_header {
+	font-family: arial;
+	font-size: 13px;
+	font-weight: normal;
+	color: #ffffff;
+	 
+}
+
+.titlu_header:hover {
+	font-family: arial;
+	font-size: 13px;
+	font-weight: normal;
+	color: #efefef;
+	 
+}
+
+
+a {
+	font-family: arial;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: underline;
+}
+
+a:hover {
+	font-family: arial;
+	font-size: 12px;
+	font-weight: normal;
+	color: #0B6ABF;
+	text-decoration: none;
+}
+
+.white_link {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #ffffff;
+	 
+}
+
+.white_link:hover {
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: normal;
+	color: #efefef;
+	 
+}
+
+
+
+.tab { padding:2px; margin-right:20px; padding-left:5px; padding-right:5px;    background: #006DE0 url(img/butbk.jpg) repeat-x;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+.tab:hover { padding:2px; padding-left:5px; padding-right:5px; background: #0a6384;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+
+.tab_pres { padding:2px;margin-right:20px; padding-left:5px; padding-right:5px; background: #2f5360   repeat-x;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+.tab_pres:hover { padding:2px; padding-left:5px; padding-right:5px; background: #2f5360   repeat-x;font-size: 11px;font-weight: bold;color: #efefef;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+
+
+.but { padding:2px; margin-right:20px; padding-left:5px; padding-right:5px;    background: #006DE0 url(img/butbk.jpg) repeat-x;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+.but:hover { padding:2px; padding-left:5px; padding-right:5px; background: #0a6384;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+
+.but_pres { padding:2px;margin-right:20px; padding-left:5px; padding-right:5px; background: #2f5360   repeat-x;font-size: 11px;font-weight: bold;color: #fff;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+.but_pres:hover { padding:2px; padding-left:5px; padding-right:5px; background: #2f5360   repeat-x;font-size: 11px;font-weight: bold;color: #efefef;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+
+.sub_tab { padding:2px; padding-left:5px; padding-right:5px;    background: #ffffff;  font-size: 11px;font-weight: bold;color: #000000;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+.sub_tab:hover { padding:2px;padding-left:5px; padding-right:5px; background: #ffffff;font-size: 11px;font-weight: bold;color: #ccc;border-top: 1px solid #6CD7FF;border-right: 1px solid #00729D;border-bottom: 1px solid #00729D;border-left: 1px solid #6CD7FF; text-decoration:none;}
+
+
+
+.head {
+	font-family: arial;
+	font-size: 14px;
+	font-weight: bold;
+	color: #E0EEEF;
+}
+
+.white {
+	font-family: arial;
+	font-size: 14px;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.white:hover {
+	font-family: arial;
+	font-size: 14px;
+	font-weight: bold;
+	color: #ffffff;
+}
+.menu_cat {
+	font-family: arial;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: none;
+}
+.menu_cat:hover {
+	font-family: arial;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: none;
+}
+
+
+
+
+.bulina {
+	font-family: Tahoma;
+	font-size: 11px;
+	font-weight: normal;
+	color: #ffffff;
+	text-decoration: none;
+	padding:0px 3px 2px 3px;
+	
+	
+	background-color:#747474;
+	  
+}
+.bulina:hover {
+	font-family: Tahoma;
+	font-size: 11px;
+	font-weight: normal;
+	color: #ffffff;
+	text-decoration: none;
+	
+	background-color:#000000;
+	  
+}
+
+
+.submeniu {
+	font-family: Tahoma;
+	font-size: 11px;
+	 
+	color: #081E1F;
+	text-decoration: none;
+	 
+	margin-left:5px;
+  
+}
+.submeniu:hover {
+font-family: Tahoma;
+	font-size: 11px;
+	 
+	color:#0071bc;
+	text-decoration: none;
+	 
+	margin-left:5px;
+
+ 
+}
+ 
+
+
+
+
+
+
+
+
+.meniu {
+	font-family: Tahoma;
+	font-size: 12px;
+	font-weight: normal;
+	color: #081E1F;
+	text-decoration: none;
+	width:130px;
+	height:20px;
+	 
+	 
+  
+}
+.meniu:hover {
+background-color:#666666;
+color:#ffffff;
+
+}
+.meniu_sel {
+	font-family: Tahoma;
+	font-size: 15px;
+	font-weight: bold;
+	color: #081E1F;
+	text-decoration: none;
+	width:130px;
+	padding:5px;
+}
+.meniu_sel:hover {
+background-color:#dadada;
+color:#ffffff;
+}
