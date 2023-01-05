@@ -7,15 +7,3 @@ After:
 SilverStripe\Control\Director:
   rules:
     'graphql': '%$SilverStripe\GraphQL\Controller.default'
----
-Name: customadmin
-Before:
-  - '#coreroutes'
----
-SilverStripe\Admin\AdminRootController:
-  url_base: 'backend-login-access-page'
-SilverStripe\Control\Director:
-  rules:
-    'admin': 'Eun\Blocks\CustomAdminController'
-    'backend-login-access-page': 'SilverStripe\Admin\AdminRootController'
----

@@ -8,3 +8,21 @@ SilverStripe\GraphQL\Schema\Schema:
             read:
               plugins:
                 paginateList: false
+        Custom\BanciInfo\Category:
+          fields: '*'
+          operations:
+            read:
+              plugins:
+                paginateList: false
+        Custom\BanciInfo\Article:
+          fields: '*'
+          operations:
+            read:
+              plugins:
+                paginateList: false
+        Custom\BanciInfo\Tag:
+          fields: '*'
+          operations:
+            read:
+              plugins:
+                paginateList: false
