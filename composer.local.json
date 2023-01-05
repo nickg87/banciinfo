@@ -1,0 +1,11 @@
+{
+  "require": {
+    "custom": "dev-master"
+  },
+  "repositories": {
+    "banci-info": {
+      "type": "path",
+      "url": "/custom/"
+    }
+  }
+}

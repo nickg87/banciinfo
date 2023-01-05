@@ -32,7 +32,19 @@
             ".htaccess",
             "index.php",
             "web.config"
-        ]
+        ],
+        "merge-plugin": {
+            "include": [
+                "composer.local.json"
+            ],
+            "recurse": true,
+            "replace": true,
+            "ignore-duplicates": false,
+            "merge-dev": true,
+            "merge-extra": false,
+            "merge-extra-deep": false,
+            "merge-scripts": false
+        }
     },
     "config": {
         "process-timeout": 600,
