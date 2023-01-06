@@ -11,6 +11,6 @@ class TagAdmin extends ModelAdmin{
     ];
 
     private static $url_segment = 'tag';
-    private static $menu_title = 'Tag';
-    private static $menu_icon_class = 'font-icon-list';
+    private static $menu_title = 'Tags';
+    private static $menu_icon_class = 'font-icon-tag';
 }

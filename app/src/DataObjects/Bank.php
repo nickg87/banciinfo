@@ -13,27 +13,31 @@ use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 
-class Article extends DataObject{
+class Bank extends DataObject{
 
-    private static $table_name = "Banci_Info_Article";
+    private static $table_name = "Banci_Info_Bank";
 
-    private static $singular_name = 'Article';
+    private static $singular_name = 'Bank';
 
     private static $db = [
-        'Active'                          => 'Boolean',
-        'Visibility'                      => 'Boolean(1)',
         'Title'                           => 'Varchar(255)',
-        'ShortTitle'                      => 'Varchar(255)',
-        'OldLink'                         => 'Varchar(255)',
         'Description'                     => 'HTMLText',
-        'ShortDescription'                => 'Text',
-        'BulletPoints'                    => 'HTMLText',
+        'Address'                         => 'Varchar(255)',
+        'Phone'                           => 'Varchar(255)',
+        'Fax'                             => 'Varchar(255)',
+        'Email'                           => 'Varchar(255)',
+        'Website'                         => 'Varchar(255)',
+        'SwiftCode'                       => 'Varchar(255)',
+        'CUI'                             => 'Varchar(255)',
+        'Reg_Com'                         => 'Varchar(255)',
+        'Active'                          => 'Boolean(1)',
+        'Footer'                          => 'Boolean(0)',
+        'OldLink'                         => 'Varchar(255)',
         'URLSegment'                      => 'Varchar(255)',
         'CustomMetaTitle'                 => 'Varchar(255)',
         'CustomMetaDescription'           => 'Text',
         'CustomOutdatedText'              => 'Text',
         'Sort'                            => 'Int',
-        'NumberOfViews'                   => 'Int',
         'ShowInSitemap'                   => 'Boolean(1)',
     ];
 
@@ -43,7 +47,6 @@ class Article extends DataObject{
 
     private static $casting = [
         'Description'             => 'HTMLText',
-        'ShortDescription'             => 'HTMLText',
     ];
 
     private static $has_many = [
@@ -52,22 +55,18 @@ class Article extends DataObject{
     ];
 
     private static $many_many = [
-        'SimilarArticles'          => Article::class,
-        ];
+        'Articles'         => Article::class,
+    ];
 
     private static $has_one = [];
 
-    private static $belongs_many_many = [
-        'Categories' => Category::class . '.Articles',
-        'Tags' => Tag::class,
-        'SimilarArts' => Article::class . '.SimilarArticles',
-    ];
+//    private static $belongs_many_many = [
+//        'Tags' => Tag::class.'.RelatedTags',
+//        'RelatedArts' => Article::class . '.RelatedArticles',
+//    ];
 
     private static $defaults = [
-        'Title'                 => 'New Article',
+        'Title'                 => 'New Bank',
     ];
 
-    public static function canEditArticle($member) {
-        return Permission::check('CMS_ACCESS\Custom\ArticleAdmin', 'any', $member);
-    }
 }

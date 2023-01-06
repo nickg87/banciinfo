@@ -11,6 +11,6 @@ class ArticleAdmin extends ModelAdmin{
     ];
 
     private static $url_segment = 'article';
-    private static $menu_title = 'Article';
-    private static $menu_icon_class = 'font-icon-list';
+    private static $menu_title = 'Articles';
+    private static $menu_icon_class = 'font-icon-edit-write';
 }

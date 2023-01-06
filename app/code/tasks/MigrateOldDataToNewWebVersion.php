@@ -18,7 +18,7 @@ use Page;
 /**
  * Class MigrateOldDataToNewWebVersion
  *
- * @package Eun\Giga
+ * @package Custom\BanciInfo
  */
 class MigrateOldDataToNewWebVersion extends BuildTask
 {
@@ -28,202 +28,298 @@ class MigrateOldDataToNewWebVersion extends BuildTask
 
 	protected $enabled = true;
 
-	public static $addedPages = 0;
-	public static $addedBlocks = 0;
+	public static $addedArticles = 0;
+	public static $addedCategories = 0;
+	public static $addedBancks = 0;
+	public static $addedCounties = 0;
+	public static $addedCities = 0;
+	public static $addedBranches = 0;
 
 
 	private static $segment = 'migrate-old-data';
 
 	function run($request)
 	{
-        var_dump('should enter here');
-		// 220 Basic of Light Measurement
-		// 31 Support
-		// 32 About us
-		// 35 News
-		//$pageIDsEN = '220, 31, 32, 35';
-//		$pageIDsEN = '31, 32, 35, 220';
+//        //categorii
+//        $sqlQuery_categorii = new SQLSelect();
+//        $sqlQuery_categorii->setFrom('erad_categorii');
+//        $sqlQuery_categorii->setSelect("*");
+//        $sqlQuery_categorii->addWhere("id_parinte = 0 ");
+//        $resultsCategorii = $sqlQuery_categorii->execute();
+//        if (!is_null($resultsCategorii)) {
+//            foreach ($resultsCategorii as $result) {
+//                $newCat = new Category();
+//                $newCat->Title = $result['link'];
+//                $newCat->CustomMetaTitle = $result['link'];
+//                $newCat->Description = $result['categorie'];
+//                $newCat->DescriptionMore = $result['link']. ' - '.$result['categorie'];
+//                $newCat->CustomMetaDescription = $result['categorie'];
+//                $newCat->URLSegment = strtolower(str_replace(' ', '-', $result['link']));
+//                $newCat->ShowInSitemap = 1;
+//                $newCat->ID = $result['id_categorie'];
+//                $newCatId = $newCat->write();
+//                if ($newCatId) {
+//                    self::$addedCategories++;
+//                    $sqlQuery_subCategorii = new SQLSelect();
+//                    $sqlQuery_subCategorii->setFrom('erad_categorii');
+//                    $sqlQuery_subCategorii->setSelect("*");
+//                    $sqlQuery_subCategorii->addWhere("id_parinte = '".$result['id_categorie']."' ");
+//                    $resultsSubCategorii = $sqlQuery_subCategorii->execute();
+//                    $rawSQL_Categorii = $sqlQuery_subCategorii->sql();
+//                    if (!is_null($resultsSubCategorii)) {
+//                        foreach ($resultsSubCategorii as $result_sc) {
+//                            $newSCat = new Category();
+//                            $newSCat->Title = $result_sc['link'];
+//                            $newSCat->CustomMetaTitle = $result_sc['link'];
+//                            $newSCat->Description = $result_sc['categorie'];
+//                            $newSCat->DescriptionMore = $result_sc['link']. ' - '.$result_sc['categorie'];
+//                            $newSCat->CustomMetaDescription = $result_sc['categorie'];
+//                            $newCat->ID = $result_sc['id_categorie'];
+//                            $newSCat->URLSegment = strtolower(str_replace(' ', '-', $result_sc['link']));
+//                            $newSCat->ShowInSitemap = 1;
+//                            $newSCat->ParentID = $newCatId;
+//                            $newSCatId = $newSCat->write();
+//                            if ($newSCatId) {
+//                                self::$addedCategories++;
+//                            }
+//                        }
+//                    }
+//                }
 //
-//		// 151 Grundlagen der Lichtmesstechnik
-//		// 8 Über uns
-//		// 562 Informationsportal [except 151!]
-//		//$pageIDsDE = '151, 8, 562';
-//		$pageIDsDE = '7, 8, 34';
-//		$pageNotIDsDE = '151';
+//            }
+//        }
 //
-//		$sqlQuery_EN = new SQLSelect();
-//		$sqlQuery_EN->setFrom('SiteTree_old_to_migrate');
-//		$sqlQuery_EN->setSelect("*");
-//		$sqlQuery_EN->addWhere("ID IN (".$pageIDsEN.") ");
-//		$resultsEN = $sqlQuery_EN->execute();
-//		$rawSQL_EN = $sqlQuery_EN->sql();
-//		//Debug::dump($rawSQL_EN);
-//
-//
-//		$sqlQuery_DE = new SQLSelect();
-//		$sqlQuery_DE->setFrom('SiteTree_old_to_migrate');
-//		$sqlQuery_DE->setSelect("*");
-//		$sqlQuery_DE->addWhere("ID IN (".$pageIDsDE.") ");
-//		$resultsDE = $sqlQuery_DE->execute();
-//		$rawSQL_DE = $sqlQuery_DE->sql();
-//		//Debug::dump($rawSQL_DE);
-//
-//
-//		$BasePageID_EN = 40;
-//		$BasePageID_DE = 8;
-//
-//		$fakeContentBlock = BaseBlock::get()->filter(array('Content:not' => null))->first();
-//
-//		//Debug::dump($resultsEN);
-//		//die('here');
-//
-//		//do it for EN
-//		if (!is_null($resultsEN)) {
-//			foreach ($resultsEN as $result) {
-//				$currentID = $result['ID'];
-//				$pageContent = trim($result['Content']);
-//				$result = self::unsetUnnecessary($result);
-//				$result['ParentID'] = $BasePageID_EN;
-//				//Debug::dump($result);
-//				$checkExistsTitle = $result['Title'];
-//				$checkExistsURLSegment = $result['URLSegment'];
-//				$pageExists = Page::get()->filter(array('Title'=> $checkExistsTitle, 'URLSegment'=> $checkExistsURLSegment, 'ParentID'=> $BasePageID_EN))->first();
-//				//Debug::dump($pageExists);
-//				if (is_null($pageExists)) {
-//					// save new page
-//					$newPageId = self:: saveNewPage($result,$BasePageID_EN, $pageContent, $fakeContentBlock);
-//
-//					if ($newPageId && strlen($pageContent)) {
-//						// save content as Content Base Block for new page
-//						$blockAdded = self::saveBlockContentToNewPage($fakeContentBlock, $pageContent, $newPageId);
-//						self::$addedPages ++;
-//						if ($blockAdded) {
-//							self::$addedBlocks ++;
-//						}
-//					}
-//
-//					if($newPageId) {
-//						self::checkExistingOldChildrenPage($currentID, $fakeContentBlock, $newPageId);
-//					}
-//				}
-//
-//				//Debug::dump($pageExists);
-//			}
-//		}
-//
-//		//do it for DE
-//		if (!is_null($resultsDE)) {
-//			foreach ($resultsDE as $result) {
-//				$currentID = $result['ID'];
-//				$pageContent = trim($result['Content']);
-//				$result = self::unsetUnnecessary($result);
-//				$result['ParentID'] = $BasePageID_DE;
-//				//Debug::dump($result);
-//				$checkExistsTitle = $result['Title'];
-//				$checkExistsURLSegment = $result['URLSegment'];
-//				$pageExists = Page::get()->filter(array('Title'=> $checkExistsTitle, 'URLSegment'=> $checkExistsURLSegment, 'ParentID'=> $BasePageID_DE))->first();
-//				//Debug::dump($pageExists);
-//				if (is_null($pageExists)) {
-//					// save new page
-//					$newPageId = self:: saveNewPage($result,$BasePageID_DE, $pageContent, $fakeContentBlock);
-//					if($newPageId) {
-//						self::checkExistingOldChildrenPage($currentID, $fakeContentBlock, $newPageId);
-//					}
-//				}
-//			}
-//		}
+//        //articole
+//        $sqlQuery_articole = new SQLSelect();
+//        $sqlQuery_articole->setFrom('erad_produse');
+//        $sqlQuery_articole->setSelect("*");
+//        $resultsArticole = $sqlQuery_articole->execute();
+//        if (!is_null($resultsArticole)) {
+//            foreach ($resultsArticole as $result) {
+//                $newArt = new Article();
+//                $newArt->Title = $result['produs'];
+//                $newArt->Created = $result['added_on'];
+//                $newArt->ShortTitle = $result['produs_cod'];
+//                $newArt->OldLink = strtolower(str_replace(' ', '-', $result['produs_cod'])).'-p'.$result['id_produs'].'.html';
+//                $newArt->CustomMetaTitle = $result['produs'];
+//                $newArt->Description = $result['descriere'];
+//                $newArt->ShortDescription = $result['descriere_scurta'];
+//                $newArt->CustomMetaDescription = $result['descriere_scurta'];
+//                $newArt->NumberOfViews = $result['accesari'];
+//                $newArt->URLSegment = strtolower(str_replace(' ', '-', $result['produs_cod']));
+//                $newArt->ShowInSitemap = 1;
+//                $newArt->Active = 1;
+//                $newArt->Visibility = 1;
+//                $newArt->ID = $result['id_produs'];
+//                $newArtID = $newArt->write();
+//                if ($newArtID) {
+//                    self::$addedArticles++;
+//                    $category = Category::get()->byId($result['id_categorie']);
+//                    if ($category) {
+//                        $category->Articles()->add($newArt);
+//                    }
+//                }
+//            }
+//        }
 
-		DB::alteration_message("Task finished. ".self::$addedPages." new Pages added and ".self::$addedBlocks." new Basic Content Added ", "changed");
+        //articole in banci
+        $sqlQuery_ab = new SQLSelect();
+        $sqlQuery_ab->setFrom('erad_produse_tematici');
+        $sqlQuery_ab->setSelect("*");
+        $resultsAB = $sqlQuery_ab->execute();
+        if (!is_null($resultsAB)) {
+            foreach ($resultsAB as $result) {
+                $bank = Bank::get()->byId($result['id_tematica']);
+                $articol = Article::get()->byId($result['id_produs']);
+                if ($bank && $articol) {
+                    $bank->Articles()->add($articol);
+                }
+            }
+        }
+
+//
+//        //institutii bancare
+//        $sqlQuery_banci = new SQLSelect();
+//        $sqlQuery_banci->setFrom('erad_tematici');
+//        $sqlQuery_banci->setSelect("*");
+//        $resultsBanci = $sqlQuery_banci->execute();
+//        if (!is_null($resultsBanci)) {
+//            foreach ($resultsBanci as $result) {
+//                $new = new Bank();
+//                $new->Title = $result['denumire_institutie'];
+//                $new->Description = $result['descriere_inst'];
+//                $new->Address = $result['adresa'];
+//                $new->Phone = $result['telefon'];
+//                $new->Fax = $result['fax'];
+//                $new->Email = $result['email'];
+//                $new->Website = $result['www'];
+//                $new->SwiftCode = $result['swift'];
+//                $new->CUI = $result['cui'];
+//                $new->Reg_Com = $result['reg_com'];
+//                $new->Active = 1;
+//                $new->Footer = $result['footer'];
+//                $new->OldLink = strtolower(str_replace(' ', '-', $result['denumire_institutie'])).'-i'.$result['id_tematica'].'.html';
+//                $new->CustomMetaTitle = $result['denumire_institutie'];
+//                $new->CustomMetaDescription = $result['descriere_inst'];
+//                $new->URLSegment = strtolower(str_replace(' ', '-', $result['denumire_institutie']));
+//                $new->ShowInSitemap = 1;
+//                $new->Active = 1;
+//                $new->ID = $result['id_tematica'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedBancks++;
+//                }
+//            }
+//        }
+//
+//        //judete
+//        $sqlQuery_judete = new SQLSelect();
+//        $sqlQuery_judete->setFrom('erad_judete');
+//        $sqlQuery_judete->setSelect("*");
+//        $resultsJudete = $sqlQuery_judete->execute();
+//        if (!is_null($resultsJudete)) {
+//            foreach ($resultsJudete as $result) {
+//                $new = new County();
+//                $new->Title = $result['judet'];
+//                $new->Description = 'NA';
+//                $new->ID = $result['id_judet'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedCounties++;
+//                }
+//
+//            }
+//        }
+
+//        //orase 1
+//        $sqlQuery_orase = new SQLSelect();
+//        $sqlQuery_orase->setFrom('erad_orase');
+//        $sqlQuery_orase->setSelect("*");
+//        $sqlQuery_orase->addWhere("id_oras < 4000 ");
+//        $sqlQuery_orase->addOrderBy("id_oras", "ASC");
+//        $resultsOrase = $sqlQuery_orase->execute();
+//        if (!is_null($resultsOrase)) {
+//            foreach ($resultsOrase as $result) {
+//                $new = new City();
+//                $new->Title = $result['oras'];
+//                $new->Description = 'NA';
+//                $new->Main = $result['principal'];
+//                $new->ID = $result['id_oras'];
+//                $new->CountyID = $result['id_parinte'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedCities++;
+//                }
+//
+//            }
+//        }
+//
+//        //orase 2
+//        $sqlQuery_orase = new SQLSelect();
+//        $sqlQuery_orase->setFrom('erad_orase');
+//        $sqlQuery_orase->setSelect("*");
+//        $sqlQuery_orase->addWhere("id_oras > 3999 and  id_oras < 8000");
+//        $sqlQuery_orase->addOrderBy("id_oras", "ASC");
+//        $resultsOrase = $sqlQuery_orase->execute();
+//        if (!is_null($resultsOrase)) {
+//            foreach ($resultsOrase as $result) {
+//                $new = new City();
+//                $new->Title = $result['oras'];
+//                $new->Description = 'NA';
+//                $new->Main = $result['principal'];
+//                $new->ID = $result['id_oras'];
+//                $new->CountyID = $result['id_parinte'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedCities++;
+//                }
+//
+//            }
+//        }
+//
+//        //orase 3
+//        $sqlQuery_orase = new SQLSelect();
+//        $sqlQuery_orase->setFrom('erad_orase');
+//        $sqlQuery_orase->setSelect("*");
+//        $sqlQuery_orase->addWhere("id_oras > 7999 and  id_oras < 12000 ");
+//        $sqlQuery_orase->addOrderBy("id_oras", "ASC");
+//        $resultsOrase = $sqlQuery_orase->execute();
+//        if (!is_null($resultsOrase)) {
+//            foreach ($resultsOrase as $result) {
+//                $new = new City();
+//                $new->Title = $result['oras'];
+//                $new->Description = 'NA';
+//                $new->Main = $result['principal'];
+//                $new->ID = $result['id_oras'];
+//                $new->CountyID = $result['id_parinte'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedCities++;
+//                }
+//
+//            }
+//        }
+//
+//        //orase 4
+//        $sqlQuery_orase = new SQLSelect();
+//        $sqlQuery_orase->setFrom('erad_orase');
+//        $sqlQuery_orase->setSelect("*");
+//        $sqlQuery_orase->addWhere("id_oras > 11999 ");
+//        $sqlQuery_orase->addOrderBy("id_oras", "ASC");
+//        $resultsOrase = $sqlQuery_orase->execute();
+//        if (!is_null($resultsOrase)) {
+//            foreach ($resultsOrase as $result) {
+//                $new = new City();
+//                $new->Title = $result['oras'];
+//                $new->Description = 'NA';
+//                $new->Main = $result['principal'];
+//                $new->ID = $result['id_oras'];
+//                $new->CountyID = $result['id_parinte'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedCities++;
+//                }
+//
+//            }
+//        }
+
+//        //filiale
+//        $sqlQuery_judete = new SQLSelect();
+//        $sqlQuery_judete->setFrom('erad_filiale');
+//        $sqlQuery_judete->setSelect("*");
+//        $resultsJudete = $sqlQuery_judete->execute();
+//        if (!is_null($resultsJudete)) {
+//            foreach ($resultsJudete as $result) {
+//                $new = new Branch();
+//                $new->Title = $result['denumire_filiala'];
+//                $new->Description = $result['descriere_filiala'];
+//                $new->Address = $result['adresa'];
+//                $new->Phone = $result['telefon'];
+//                $new->Fax = $result['fax'];
+//                $new->Email = $result['email'];
+//                $oldLink = preg_replace('/[^\da-z]/i', ' ', $result['denumire_filiala']).'-f'.$result['id_filiala'].'.html';
+//                $oldLink = preg_replace('/ +/', '-', $oldLink);
+//                $oldLink = strtolower(preg_replace('/-+/', '-', $oldLink));
+//                $new->OldLink = $oldLink;
+//                $new->CountyID = $result['id_judet'];
+//                $new->CityID = $result['id_judet'];
+//                $new->BankID = $result['id_judet'];
+//                $new->ID = $result['id_filiala'];
+//                $newID = $new->write();
+//                if ($newID) {
+//                    self::$addedBranches++;
+//                }
+//            }
+//        }
+
+		DB::alteration_message("Task finished. 
+                <br> ".self::$addedCategories." new Categories added 
+                <br>  ".self::$addedArticles." new Articles added 
+                <br>  ".self::$addedBancks." new Banks Added 
+                <br>  ".self::$addedCounties." new Counties Added 
+                <br>  ".self::$addedCities." new Cities Added 
+                <br>  ".self::$addedBranches." new Branches for Banks Added 
+                ", "changed");
 	}
 
-	public function checkExistingOldChildrenPage($id, $fakeContentBlock, $PageId) {
-		$sqlQuery = new SQLSelect();
-		$sqlQuery->setFrom('SiteTree_old_to_migrate');
-		$sqlQuery->setSelect("*");
-		$sqlQuery->addWhere("ParentID = ".$id." ");
-		$results = $sqlQuery->execute();
-		if (!is_null($results)) {
-			foreach ($results as $result) {
-				$currentID = $result['ID'];
-				$pageContent = trim($result['Content']);
-				$result = self::unsetUnnecessary($result);
-				$result['ParentID'] = $id;
-				$checkExistsTitle = $result['Title'];
-				$checkExistsURLSegment = $result['URLSegment'];
-				$pageExists = Page::get()->filter(array('Title'=> $checkExistsTitle, 'URLSegment'=> $checkExistsURLSegment, 'ParentID'=> $PageId))->first();
-				if (is_null($pageExists)) {
-					// save new page
-					//$newPageId = self:: saveNewPage($result,$id, $pageContent, $fakeContentBlock);
-					$fields = array_keys($result);
-					$page = new Page();
-
-					foreach ($fields as $field) {
-						$page->{$field} = $result[$field];
-					}
-
-					$page->ParentID = $PageId;
-					$newPageId = $page->write();
-
-					$page->publish('Stage', 'Live');
-
-					if ($newPageId && strlen($pageContent)) {
-						// save content as Content Base Block for new page
-						$blockAdded = self::saveBlockContentToNewPage($fakeContentBlock, $pageContent, $newPageId);
-						self::$addedPages ++;
-						if ($blockAdded) {
-							self::$addedBlocks ++;
-						}
-					}
-
-					if($newPageId) {
-						self::checkExistingOldChildrenPage($currentID, $fakeContentBlock, $newPageId);
-					}
-				}
-
-
-			}
-		}
-
-	}
-
-	public function unsetUnnecessary($result) {
-		unset($result['MenuTitle'],$result['ClassName'],$result['MetaTitle'],$result['ID'],$result['Content']);
-		return $result;
-	}
-
-	public function saveBlockContentToNewPage($record, $content, $parentPageID)
-	{
-		$clone = $record->duplicate();
-		$clone->Content = $content;
-		$clone->ParentPageID = $parentPageID;
-		return $clone->write();
-	}
-
-	public function saveNewPage($result,$parentPageID, $pageContent, $fakeContentBlock)
-	{
-		$fields = array_keys($result);
-		$page = new Page();
-		//Debug::dump($page);
-		//Debug::dump($page->$allowed_children);
-
-		foreach ($fields as $field) {
-			$page->{$field} = $result[$field];
-		}
-
-		$page->ParentID = $parentPageID;
-		$newPageId = $page->write();
-
-		$page->publish('Stage', 'Live');
-
-		if ($newPageId && strlen($pageContent)) {
-			// save content as Content Base Block for new page
-			$blockAdded = self::saveBlockContentToNewPage($fakeContentBlock, $pageContent, $newPageId);
-			self::$addedPages ++;
-			if ($blockAdded) {
-				self::$addedBlocks ++;
-			}
-		}
-
-		return $newPageId;
-	}
 }

@@ -1,11 +1,12 @@
 <?php
 /**
- * @author   : stas
- * @date     : 29 Apr 2020
- * @copyright: einsundnull
+ * @author   : nick
+ * @date     : 06 Ian 2023
+ * @copyright: banci-info
  */
 
-namespace Eun\Blocks;
+namespace Custom\BanciInfo;
+
 
 
 use SilverStripe\SiteConfig\SiteConfig;

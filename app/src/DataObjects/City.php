@@ -14,40 +14,39 @@ use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\ToggleCompositeField;
 
 /**
- * Class Tag
+ * Class City
  *
  * @property string Title
  * @property string Description
  *
- * @method ManyManyList Articles()
  *
- * @package Eun\Giga
+ * @package Custom\BanciInfo
  */
-class Tag extends DataObject
+class City extends DataObject
 {
-	private static $table_name = "Banci_Info_Tag";
+	private static $table_name = "Banci_Info_City";
 
-	private static $singular_name = 'Tag';
+	private static $singular_name = 'City';
 
 	private static $default_sort = "Sort ASC";
 
 	private static $db = [
 		'Title'       => 'Varchar(255)',
 		'Description' => 'Varchar(255)',
+		'Main'        => 'Boolean(0)',
 		'Sort'        => 'Int',
 	];
 
-	private static $many_many = [
-//		'Articles' => Article::class,
-//		'Banks' => Bank::class,
+	private static $has_one = [
+		'County' => County::class,
 	];
 
 	public static function getDropdown()
 	{
 		$res = [];
-		$cats = Tag::get();
+		$cats = City::get();
 		foreach ($cats as $cat) {
-			$res[ $cat->ID ] = $cat->Title__en_US;
+			$res[ $cat->ID ] = $cat->Title;
 		}
 		return $res;
 	}

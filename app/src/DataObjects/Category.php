@@ -35,6 +35,8 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\DataList;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Terraformers\RichFilterHeader\Form\GridField\RichFilterHeader;
 
 /**
  * Class Category
@@ -47,7 +49,7 @@ use SilverStripe\ORM\DataList;
  * @method ManyManyList ProductLoops
  * @method Image Image
  *
- * @package Eun\Giga
+ * @package Custom\BanciInfo
  */
 class Category extends DataObject
 {
@@ -187,6 +189,8 @@ class Category extends DataObject
 			$config->removeComponentsByType(GridFieldFilterHeader::class);
 			$config->removeComponentsByType(GridFieldAddExistingAutocompleter::class);
 			$dataColumns = $config->getComponentByType(GridFieldDataColumns::class);
+            $config->addComponent(new GridFieldOrderableRows('Sort'));
+            $config->addComponent(self::_filtersConfig());
 
 			$config->removeComponentsByType(GridFieldExportButton::class);
 
@@ -197,6 +201,8 @@ class Category extends DataObject
 
 			$presetDisplayFields = [];
 			$presetDisplayFields['ID'] = 'ID';
+			$presetDisplayFields['Title'] = 'Title';
+			$presetDisplayFields['Description'] = 'Description';
 
 			$dataColumns->setDisplayFields($presetDisplayFields);
 
@@ -225,6 +231,46 @@ class Category extends DataObject
 			$this->ShowInSitemap));
 		return $fields;
 	}
+
+    public static function _filtersConfig()
+    {
+        $filter = new RichFilterHeader();
+
+        $presetFilterMethods = [];
+        $presetFilterMethods['ID'] = function(DataList $list, $name, $value) {
+            return $list->filterAny([
+                $name . ':PartialMatch' => $value,
+            ]);
+        };
+        $presetFilterMethods['Title'] = function(DataList $list, $name, $value) {
+            return $list->filterAny([
+                $name . ':PartialMatch' => $value,
+            ]);
+        };
+        $presetFilterMethods['Description'] = function(DataList $list, $name, $value) {
+            return $list->filterAny([
+                $name . ':PartialMatch' => $value,
+            ]);
+        };
+
+
+        $presetFilterFields = [];
+        $presetFilterFields['ID'] = $labelTitle = TextField::create('', '');
+        $presetFilterFields['Title'] = $labelTitle = TextField::create('', '');
+        $presetFilterFields['Description'] = $labelTitle = TextField::create('', '');
+
+
+        $presetFilterConfig = [];
+        $presetFilterConfig['ID'] = 'ID';
+        $presetFilterConfig['Title'] = 'Title';
+        $presetFilterConfig['Description'] = 'Description';
+
+        $filter
+            ->setFilterConfig($presetFilterConfig)
+            ->setFilterMethods($presetFilterMethods);
+
+        return $filter;
+    }
 
 	public function getExportFields()
 	{

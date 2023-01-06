@@ -11,19 +11,19 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldPaginator;
 use SS_JoinedGraphQL\DataObjects\Item;
 
-class CategoryAdmin extends ModelAdmin{
+class BankAdmin extends ModelAdmin{
 
-    private static $menu_icon_class = 'font-icon-tree';
+    private static $menu_icon_class = 'font-icon-credit-card';
 
     private static $awesome_icon = "fa-cubes";
 
     private static $managed_models = [
-        Category::class,
+        Bank::class,
     ];
 
-    private static $url_segment = 'category';
+    private static $url_segment = 'bank';
 
-    private static $menu_title = 'Category';
+    private static $menu_title = 'Bank institutions';
 
 
     public function getEditForm($id = null, $fields = null)
@@ -32,7 +32,7 @@ class CategoryAdmin extends ModelAdmin{
 
         $gridFieldName = $this->sanitiseClassName($this->modelClass);
         $gridField = $form->Fields()->fieldByName($gridFieldName);
-        $gridField->setList($gridField->getList()->filter(['ParentID' => '0']));
+        //$gridField->setList($gridField->getList()->filter(['ParentID' => '0']));
 
 
         $gridField->getConfig()->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(999999);

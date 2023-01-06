@@ -2,12 +2,6 @@ SilverStripe\GraphQL\Schema\Schema:
   schemas:
     default:
       models:
-        SS_JoinedGraphQL\DataObjects\Item:
-          fields: '*'
-          operations:
-            read:
-              plugins:
-                paginateList: false
         Custom\BanciInfo\Category:
           fields: '*'
           operations:

@@ -22,29 +22,36 @@ use SilverStripe\Forms\ToggleCompositeField;
  *
  * @package Custom\BanciInfo
  */
-class City extends DataObject
+class Branch extends DataObject
 {
-	private static $table_name = "Banci_Info_City";
+	private static $table_name = "Banci_Info_Branch";
 
-	private static $singular_name = 'City';
+	private static $singular_name = 'Branch';
 
 	private static $default_sort = "Sort ASC";
 
 	private static $db = [
 		'Title'       => 'Varchar(255)',
 		'Description' => 'Varchar(255)',
-		'Main'        => 'Boolean(0)',
+		'Address'     => 'Varchar(255)',
+		'Phone'       => 'Varchar(255)',
+		'Fax'         => 'Varchar(255)',
+		'Email'       => 'Varchar(255)',
+		'Active'      => 'Boolean(0)',
+		'OldLink'     => 'Varchar(255)',
 		'Sort'        => 'Int',
 	];
 
 	private static $has_one = [
 		'County' => County::class,
+		'City' => City::class,
+		'Bank' => Bank::class,
 	];
 
 	public static function getDropdown()
 	{
 		$res = [];
-		$cats = City::get();
+		$cats = Branch::get();
 		foreach ($cats as $cat) {
 			$res[ $cat->ID ] = $cat->Title;
 		}

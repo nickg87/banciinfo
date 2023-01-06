@@ -19,9 +19,9 @@ use SilverStripe\Forms\ToggleCompositeField;
  * @property string Title
  * @property string Description
  *
- * @method ManyManyList Products()
+ * @method ManyManyList Articles()
  *
- * @package Eun\Giga
+ * @package Custom\BanciInfo
  */
 class Tag extends DataObject
 {
@@ -38,7 +38,8 @@ class Tag extends DataObject
 	];
 
 	private static $many_many = [
-		'Articles' => Article::class,
+//		'Articles' => Article::class,
+//		'Banks' => Bank::class,
 	];
 
 	public static function getDropdown()
@@ -57,7 +58,8 @@ class Tag extends DataObject
 	{
 		$fields = parent::getCMSFields();
 		//$fields->removeByName(array_keys(self::$db));
-		$fields->removeByName('Articles');
+//		$fields->removeByName('Articles');
+		//$fields->removeByName('Banks');
 
 		return $fields;
 	}

@@ -1,0 +1,35 @@
+footer {
+    background: #ffffff !important;
+}
+
+.footer a {color: #B90000 !important}
+
+/*li.link a {color: #B90000 !important}*/
+
+.cms-menu, .cms-menu__list li a {background: #f4f8f4 !important;}
+.cms-menu__list li.current a, .cms-menu__list li.current a:hover {background: #dae8da !important;}
+.cms-menu__list li a:active, .cms-menu__list li a:focus, .cms-menu__list li a:hover {
+    text-decoration: none;
+    background-color: #dae8da !important;
+}
+
+.cms-menu__header {
+    background: #006600 !important;
+}
+.cms-sitename {
+    border-bottom: 1px solid #004400;
+}
+.cms-sitename:focus, .cms-sitename:hover {
+    background-color: #004400;
+}
+
+
+.cms-login-status .cms-login-status__profile-link:hover {
+    background-color: #004400;
+}
+
+.cms-login-status .cms-login-status__logout-link:hover {
+    opacity: .9;
+    text-decoration: none;
+    background-color: #004400;
+}

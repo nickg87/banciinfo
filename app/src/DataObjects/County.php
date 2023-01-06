@@ -14,7 +14,7 @@ use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\ToggleCompositeField;
 
 /**
- * Class City
+ * Class County
  *
  * @property string Title
  * @property string Description
@@ -22,25 +22,23 @@ use SilverStripe\Forms\ToggleCompositeField;
  *
  * @package Custom\BanciInfo
  */
-class City extends DataObject
+class County extends DataObject
 {
-	private static $table_name = "Banci_Info_City";
+	private static $table_name = "Banci_Info_County";
 
-	private static $singular_name = 'City';
+	private static $singular_name = 'County';
 
 	private static $default_sort = "Sort ASC";
 
 	private static $db = [
 		'Title'       => 'Varchar(255)',
 		'Description' => 'Varchar(255)',
-		'Main'        => 'Boolean(0)',
 		'Sort'        => 'Int',
 	];
 
-	private static $many_many = [
-//		'Articles' => Article::class,
-//		'Banks' => Bank::class,
-	];
+    private static $has_many = [
+        'Cities'        => City::class,
+    ];
 
 	public static function getDropdown()
 	{

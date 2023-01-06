@@ -1,29 +1,31 @@
 <?php
 /**
  * @author   : nick
- * @date     : 05 Ian 2023
+ * @date     : 06 Ian 2023
  * @copyright: banci-info
  */
 
 namespace Custom\BanciInfo;
 
-use Eun\Blocks\SiteConfigReader;
 use PageController;
 use SilverStripe\Control\Director;
-use SilverStripe\Control\Controller;
-use Eun\Giga\Category;
-use Eun\Giga\Product;
-use SilverStripe\i18n\i18n;
 use Page;
 use SilverStripe\Dev\Debug;
 
-class BanksPageController extends PageController
+class MainPageController extends PageController
 {
 	/**
 	 * @var array
 	 */
-	private static $allowed_actions = [
-	];
+	private static $allowed_actions = [];
+
+    protected function init()
+    {
+        parent::init();
+        //Debug::dump('enters here main');
+        // You can include any CSS or JS required by your project here.
+        // See: https://docs.silverstripe.org/en/developer_guides/templates/requirements/
+    }
 
 	public static function getTopLevelPage($id = false){
 		if ($id) {

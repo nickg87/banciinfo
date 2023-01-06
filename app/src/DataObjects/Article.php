@@ -8,6 +8,8 @@
 namespace Custom\BanciInfo;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
+use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 
@@ -21,6 +23,7 @@ class Article extends DataObject{
         'Active'                          => 'Boolean',
         'Visibility'                      => 'Boolean(1)',
         'Title'                           => 'Varchar(255)',
+        'ShortTitle'                      => 'Varchar(255)',
         'OldLink'                         => 'Varchar(255)',
         'Description'                     => 'HTMLText',
         'ShortDescription'                => 'Text',
@@ -29,7 +32,9 @@ class Article extends DataObject{
         'CustomMetaTitle'                 => 'Varchar(255)',
         'CustomMetaDescription'           => 'Text',
         'CustomOutdatedText'              => 'Text',
-        'OrderRank'                       => 'Int',
+        'Sort'                            => 'Int',
+        'NumberOfViews'                   => 'Int',
+        'ShowInSitemap'                   => 'Boolean(1)',
     ];
 
     private static $indexes = [
@@ -42,10 +47,8 @@ class Article extends DataObject{
     ];
 
     private static $has_many = [
-//        'Images'        => ArticleImage::class,
-//        'ContentImages' => ArticleContentImage::class,
-//        'Features'      => ProductFeature::class,
-//        'Files'         => ArticleFile::class,
+        'Images'        => Image::class,
+        'Files'         => File::class,
     ];
 
     private static $many_many = [
@@ -56,7 +59,8 @@ class Article extends DataObject{
 
     private static $belongs_many_many = [
         'Categories' => Category::class . '.Articles',
-        'Tags' => Tag::class,
+//        'Tags' => Tag::class.'.TagArticles',
+        'Banks' => Bank::class.'.Articles',
         'SimilarArts' => Article::class . '.SimilarArticles',
     ];
 

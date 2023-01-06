@@ -1,33 +1,41 @@
 <?php
 /**
  * @author   : nick
- * @date     : 03 Mar 2021
- * @copyright: einsundnull
+ * @date     : 06 Ian 2023
+ * @copyright: banci-info
  */
 
-namespace Eun\Giga;
+namespace Custom\BanciInfo;
 
 
+use Custom\BanciInfo\SiteConfigReader;
 use SilverStripe\Dev\Debug;
 use SilverStripe\View\SSViewer;
 use SilverStripe\View\ArrayData;
-use Eun\Giga\GigaPageController;
-use SilverStripe\i18n\i18n;
+use Custom\BanciInfo\MainPageController;
 use SilverStripe\Control\Controller;
 
 
 /**
- * Controller for CategoryPages.
+ * Controller for banks Page.
  */
-class CategoryPageController extends GigaPageController
+class BanksPageController extends MainPageController
 {
 	private static $allowed_actions = ['index'];
+
+    protected function init()
+    {
+        parent::init();
+        // Debug::dump('enters here banks');
+        // You can include any CSS or JS required by your project here.
+        // See: https://docs.silverstripe.org/en/developer_guides/templates/requirements/
+    }
 
 	private static $url_handlers = [
 		'//$URLSegment' => 'index',
 	];
 
-	private static $url_segment = 'cat';
+	private static $url_segment = 'articole';
 
 	/**
 	 * Return a link to this request handler.
@@ -52,46 +60,44 @@ class CategoryPageController extends GigaPageController
 
 	public function index(){
 		//Get the Category
-		$Category = $this->getCurrentCategory();
-		if($Category)
+		$curItem = $this->getCurrentBank();
+        $Content = '';
+		if($curItem)
 		{
-			$metaTitle = $Category->T('Title');
-			if ($Category->T('CustomMetaTitle') != '') {
-				$metaTitle = ' ';
-				$this->data()->MetaTitle = $Category->T('CustomMetaTitle');
+			$metaTitle = $curItem->Title;
+			if ($curItem->CustomMetaTitle != '') {
+				$metaTitle = $curItem->CustomMetaTitle;
+				//$this->data()->MetaTitle = $curItem->CustomMetaTitle;
 			}
-			if ($Category->T('CustomMetaDescription') != '') {
-				$this->data()->MetaDescription = $Category->T('CustomMetaDescription');
+			if ($curItem->CustomMetaDescription != '') {
+				$this->data()->MetaDescription =$curItem->CustomMetaDescription;
 			} else {
-				if ($Category->T('Description') != '') {
-					$this->data()->MetaDescription = $Category->T('Description');
+				if ($curItem->Description != '') {
+					$this->data()->MetaDescription = $curItem->Description;
 				}
 			}
-			return $this->renderWith('Page',['Title' => $metaTitle, 'MetaTitle' => $metaTitle  ]);
+            if ($curItem->Description != '') {
+                $Content = $curItem->Description;
+                if ($curItem->Articles()->count()) {
+                    $Content .= '<br> Gasiti '.$curItem->Articles()->count().' articole despre aceasta insititutie';
+                }
+            }
+            $siteTitle = SiteConfigReader::get('Title');
+			return $this->renderWith('Page',['Title' => $curItem->Title, 'MetaTitle' => $metaTitle, 'Content' => $Content  ]);
 		} else {
-			//Category not found
-			$redirectLink = URL_CATEGORIES_US;
-			$langFromUrl = self::getLangFromUrl();
-			if ($langFromUrl == I18N_DE) {
-				$redirectLink = URL_CATEGORIES_DE;
-			} else if ($langFromUrl == I18N_FR) {
-				$redirectLink = URL_CATEGORIES_FR;
-			} else if ($langFromUrl == I18N_ES) {
-				$redirectLink = URL_CATEGORIES_ES;
-			} else if ($langFromUrl == I18N_CN) {
-				$redirectLink = URL_CATEGORIES_CN;
-			}
-			$this->redirect('/'.$redirectLink, 301);
+			//Bank not found
+
+			$this->redirect('/banca-negasita', 301);
 		}
 	}
 
 	public function getCurrentObject($withActive = false)
 	{
-		return self::getCurrentCategory($withActive);
+		return self::getCurrentBank($withActive);
 	}
 
 	//Get's the current product from the URL, if any
-	public function getCurrentCategory($withActive = false)
+	public function getCurrentBank($withActive = false)
 	{
 		$data = $this->request->allParams();
 		$URLSegment = urldecode($data['URLSegment']);
@@ -100,68 +106,46 @@ class CategoryPageController extends GigaPageController
 			//$start = "Active = 1 AND ";
 			$start = " ";
 		}
-		$curLang = self::getLangFromUrl();
-		$Category = Category::get_one(Category::class, $start . " (URLSegment__".$curLang." = '" . $URLSegment . "' )");
-		if ($URLSegment && $Category) {
-			return $Category;
+		$curItem = Bank::get_one(Bank::class, $start . " (URLSegment = '" . $URLSegment . "' )");
+		if ($URLSegment && $curItem) {
+			return $curItem;
 		} else {
-			$inactiveCategory = Category::get_one(Category::class, $start . " (URLSegment__".$curLang." = '" . $URLSegment . "' )");
-			if ($inactiveCategory) {
-				$Category = Category::get_one(Category::class, $start . " (URLSegment__en_US = '" . $inactiveCategory->URLSegment__en_US . "' )");
-				if ($Category) {
-					return $Category;
-				}
-			}
+            return null;
 		}
 	}
 
-	public static function getLangFromUrl() {
-		$curLang = I18N_US;
-		$tlp = parent::getTopLevelPage();
-		if ($tlp->URLSegment == URL_SEGMENT_DE) {
-			$curLang = I18N_DE;
-		} else if ($tlp->URLSegment == URL_SEGMENT_FR) {
-			$curLang = I18N_FR;
-		} else if ($tlp->URLSegment == URL_SEGMENT_ES) {
-			$curLang = I18N_ES;
-		} else if ($tlp->URLSegment == URL_SEGMENT_CN) {
-			$curLang = I18N_CN;
-		}
-		return $curLang;
-	}
 
-
-	public function BootstrapBreadcrumbs($maxDepth = 20, $unlinked = false, $stopAtPageType = false, $showHidden = false)
-	{
-		$pages = $this->owner->getBreadcrumbItems($maxDepth, $stopAtPageType, $showHidden);
-
-		$productsPageLink = '';
-		$productsPageText = '';
-
-		$key = 1;
-		foreach ($pages as $page) {
-			if ($key == $pages->count()) {
-				$page->Title = self::getCurrentCategory()->T('Title');
-			}
-			$key++;
-		}
-		$currentCat =  self::getCurrentCategory();
-		//Debug::dump($currentCat);
-		if ($currentCat->ParentID > 0) {
-			$parentCategory = Category::get_by_id($currentCat->ParentID);
-			//Debug::dump($parentCategory);
-			$productsPageLink = $parentCategory->AbsoluteLinkByLang(self::getLangFromUrl());
-			$productsPageText = $parentCategory->T('Title');
-		}
-
-		$template = new SSViewer(['BreadcrumbsTemplate', 'Eun\Includes\BreadcrumbsTemplate']);
-		return $template->process($this->owner->customise(new ArrayData([
-			"Pages"            => $pages,
-			"TypeCategory"     => true,
-			"ProductsPageText" => $productsPageText,
-			"ProductsPageLink" => $productsPageLink,
-			"Unlinked"         => $unlinked,
-		])));
-	}
+//	public function BootstrapBreadcrumbs($maxDepth = 20, $unlinked = false, $stopAtPageType = false, $showHidden = false)
+//	{
+//		$pages = $this->owner->getBreadcrumbItems($maxDepth, $stopAtPageType, $showHidden);
+//
+//		$productsPageLink = '';
+//		$productsPageText = '';
+//
+//		$key = 1;
+//		foreach ($pages as $page) {
+//			if ($key == $pages->count()) {
+//				$page->Title = self::getCurrentCategory()->T('Title');
+//			}
+//			$key++;
+//		}
+//		$currentCat =  self::getCurrentCategory();
+//		//Debug::dump($currentCat);
+//		if ($currentCat->ParentID > 0) {
+//			$parentCategory = Category::get_by_id($currentCat->ParentID);
+//			//Debug::dump($parentCategory);
+//			$productsPageLink = $parentCategory->AbsoluteLinkByLang(self::getLangFromUrl());
+//			$productsPageText = $parentCategory->T('Title');
+//		}
+//
+//		$template = new SSViewer(['BreadcrumbsTemplate', 'Eun\Includes\BreadcrumbsTemplate']);
+//		return $template->process($this->owner->customise(new ArrayData([
+//			"Pages"            => $pages,
+//			"TypeCategory"     => true,
+//			"ProductsPageText" => $productsPageText,
+//			"ProductsPageLink" => $productsPageLink,
+//			"Unlinked"         => $unlinked,
+//		])));
+//	}
 
 }
