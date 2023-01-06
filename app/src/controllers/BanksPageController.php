@@ -86,8 +86,10 @@ class BanksPageController extends MainPageController
 			return $this->renderWith('Page',['Title' => $curItem->Title, 'MetaTitle' => $metaTitle, 'Content' => $Content  ]);
 		} else {
 			//Bank not found
+            $title = $metaTitle = 'Lista banci romania!';
+            $Content = 'Mai jos gasiti lista tuturor bancilor active din Romania!';
+            return $this->renderWith('Page',['Title' => $title, 'MetaTitle' => $metaTitle, 'Content' => $Content  ]);
 
-			$this->redirect('/banca-negasita', 301);
 		}
 	}
 
@@ -100,7 +102,7 @@ class BanksPageController extends MainPageController
 	public function getCurrentBank($withActive = false)
 	{
 		$data = $this->request->allParams();
-		$URLSegment = urldecode($data['URLSegment']);
+		$URLSegment = urldecode($data['URLSegment'] ?? '');
 		$start = '';
 		if ($withActive) {
 			//$start = "Active = 1 AND ";

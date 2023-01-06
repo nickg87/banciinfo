@@ -42,7 +42,7 @@ SilverStripe\Core\Injector\Injector:
     class: Custom\BanciInfo\MainPageController
 SilverStripe\Control\Director:
   rules:
-    'articole': Custom\BanciInfo\BanksPageController
+    'lista-banci': Custom\BanciInfo\BanksPageController
 #---
 #Name: myadmin
 #After:
