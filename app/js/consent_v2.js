@@ -5,17 +5,47 @@ const WIDGET_SECOND_COLOR = '#202020';
 const COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE = true;
 const COOKIE_CONSENT_ALLOW_ALL = true;
 
+const COOKIE_CONSENT_GOOGLE_PARTNER = {
+    ad_storage: COOKIE_CONSENT_ALLOW_ALL ? "granted" : "denied",
+    ad_user_data: COOKIE_CONSENT_ALLOW_ALL ? "granted" : "denied",
+    ad_personalization: COOKIE_CONSENT_ALLOW_ALL ? "granted" : "denied",
+    analytics_storage: COOKIE_CONSENT_ALLOW_ALL ? "granted" : "denied",
+    functionality_storage: "granted",
+    personalization_storage: "granted"
+};
+
+const PARTNER_EXCEPTIONS = [
+    'functionality_storage',
+    'personalization_storage'
+];
+
 const COOKIE_CONSENT_CATEGORY_TYPES_EXTENDED = {
     necessary: true,
     preferences: COOKIE_CONSENT_ALLOW_ALL,
     statistics: COOKIE_CONSENT_ALLOW_ALL,
-    marketing: COOKIE_CONSENT_ALLOW_ALL
+    marketing: COOKIE_CONSENT_ALLOW_ALL,
+    gc: COOKIE_CONSENT_GOOGLE_PARTNER
 };
+
 
 const COOKIE_CONSENT_CATEGORY_TYPES_SIMPLE = {
     necessary: true,
-    optional: COOKIE_CONSENT_ALLOW_ALL
+    optional: COOKIE_CONSENT_ALLOW_ALL,
+    gc: COOKIE_CONSENT_GOOGLE_PARTNER
 };
+
+let cacat = {
+    "necessary": true,
+    "optional": true,
+    "gc": {
+        "ad_storage": "granted",
+        "ad_user_data": "granted",
+        "ad_personalization": "granted",
+        "analytics_storage": "granted",
+        "functionality_storage": "granted",
+        "personalization_storage": "granted"
+    }
+}
 
 const COOKIE_CONSENT_CATEGORY_TYPES = COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE ? COOKIE_CONSENT_CATEGORY_TYPES_SIMPLE : COOKIE_CONSENT_CATEGORY_TYPES_EXTENDED;
 
@@ -89,13 +119,30 @@ function setCookieConsent(consent) {
 
 
 function denyOrAllowAllCookieCategorySession(action) {
+    //console.log('enters here' + action);
     // Initialize cookie consent object
     const cookieConsentCategoryTypes = {};
 
     for (const category in COOKIE_CONSENT_CATEGORY_TYPES) {
         if (Object.hasOwnProperty.call(COOKIE_CONSENT_CATEGORY_TYPES, category)) {
             if (category !== 'neccesary') {
-                cookieConsentCategoryTypes[category] = action;
+                if (category === 'gc') {
+                    let gcObject = cookieConsentCategoryTypes[category] || {};
+                    for (const key in COOKIE_CONSENT_CATEGORY_TYPES[category]) {
+                        if (Object.hasOwnProperty.call(COOKIE_CONSENT_CATEGORY_TYPES[category], key)) {
+                            // Check if the key is not in PARTNER_EXCEPTIONS
+                            if (!PARTNER_EXCEPTIONS.includes(key)) {
+                                // Set the value based on the action
+                                gcObject[key] = action ? "granted" : "denied";
+                            } else {
+                                gcObject[key] ="granted";
+                            }
+                        }
+                    }
+                    cookieConsentCategoryTypes[category] = gcObject;
+                } else {
+                    cookieConsentCategoryTypes[category] = action;
+                }
             }
         }
     }
@@ -129,15 +176,14 @@ function initiateCookieCategorySession() {
 function checkCookieCategorySession() {
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
-
     // If the cookie exists
     if (cookieConsentCookie) {
         const cookieConsentString = cookieConsentCookie.split('=')[1];
         const cookieConsentObject = JSON.parse(cookieConsentString);
         // Loop through each checkbox input and set its checked property based on the cookieConsentObject
-        const checkboxes = document.querySelectorAll('.___cookieConsentToggle input[type="checkbox"]');
+        const checkboxes = document.querySelectorAll('.___cookieConsent__Toggle input[type="checkbox"]');
         checkboxes.forEach(checkbox => {
-            const cookieCategory = checkbox.name.replace('cookie', '').toLowerCase();
+            const cookieCategory = checkbox.name.replace('___cookieConsent__', '').toLowerCase();
             checkbox.checked = cookieConsentObject[cookieCategory];
         });
     }
@@ -152,7 +198,27 @@ function setCookieCategoryConsent(category) {
         const cookieConsentObject = JSON.parse(cookieConsentString);
 
         // Update the corresponding property in the cookieConsentObject
-        cookieConsentObject[category] = !cookieConsentObject[category];
+        const currentAction = !cookieConsentObject[category];
+        cookieConsentObject[category] = currentAction;
+
+        //logic for gc
+        //bellow will always be true
+        if (category !== 'necessary') {
+            const gcCategory = 'gc';
+            let gcObject = COOKIE_CONSENT_CATEGORY_TYPES[gcCategory] || {};
+            for (const key in gcObject) {
+                if (Object.hasOwnProperty.call(COOKIE_CONSENT_CATEGORY_TYPES[gcCategory], key)) {
+                    // Check if the key is not in PARTNER_EXCEPTIONS
+                    if (!PARTNER_EXCEPTIONS.includes(key)) {
+                        // Set the value based on the action
+                        gcObject[key] = currentAction ? "granted" : "denied";
+                    } else {
+                        gcObject[key] ="granted";
+                    }
+                }
+            }
+            cookieConsentObject[gcCategory] = gcObject;
+        }
 
         // Serialize the updated object back to a string
         const updatedCookieConsentString = JSON.stringify(cookieConsentObject);
@@ -194,12 +260,17 @@ function displayCookieConsentButton() {
             position: fixed;
             bottom: 20px;
             left: 20px;
+            height: 48px;
+            width: 48px;
             border-radius: 50%;
             padding: 0.5rem;
             cursor: pointer;
             border: 1px solid #ccc;
             background-color: rgba(255, 255, 255, 0.75);
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: ${CONSENT_MODAL_Z_INDEX}; /* Ensure the backdrop is behind the modal */
         }
         #___cookieButtonConsent:hover {
