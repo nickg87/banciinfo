@@ -48,7 +48,8 @@
             "merge-scripts": false
         },
         "expose": [
-            "app/css"
+            "app/css",
+            "app/js"
         ]
     },
     "config": {

@@ -43,6 +43,10 @@ SilverStripe\Core\Injector\Injector:
 SilverStripe\Control\Director:
   rules:
     'lista-banci': Custom\BanciInfo\BanksPageController
+SilverStripe\Core\Manifest\ModuleResourceLoader:
+  resource_manifest:
+    javascript:
+      'app/js/consent_v2.js': 'app/js/consent_v2.js'
 #---
 #Name: myadmin
 #After:
