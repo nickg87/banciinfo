@@ -2,7 +2,7 @@ const COOKIE_NAME = 'cookieConsentGlobalHolder';
 const LOCAL_STORAGE_COOKIE_NAME = 'cookieConsentGlobal';
 const WIDGET_MAIN_COLOR = '#1032cf';
 const WIDGET_SECOND_COLOR = '#202020';
-const COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE = true;
+const COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE = false;
 const COOKIE_CONSENT_ALLOW_ALL = true;
 
 const COOKIE_CONSENT_GOOGLE_PARTNER = {
@@ -34,18 +34,6 @@ const COOKIE_CONSENT_CATEGORY_TYPES_SIMPLE = {
     gc: COOKIE_CONSENT_GOOGLE_PARTNER
 };
 
-let cacat = {
-    "necessary": true,
-    "optional": true,
-    "gc": {
-        "ad_storage": "granted",
-        "ad_user_data": "granted",
-        "ad_personalization": "granted",
-        "analytics_storage": "granted",
-        "functionality_storage": "granted",
-        "personalization_storage": "granted"
-    }
-}
 
 const COOKIE_CONSENT_CATEGORY_TYPES = COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE ? COOKIE_CONSENT_CATEGORY_TYPES_SIMPLE : COOKIE_CONSENT_CATEGORY_TYPES_EXTENDED;
 
@@ -112,8 +100,8 @@ function hasConsentedToCookies() {
     return localStorage.getItem(LOCAL_STORAGE_COOKIE_NAME) === 'true';
 }
 
-// Set consent for cookies
-function setCookieConsent(consent) {
+// Set consent for cookies into localStorage
+function setCookieConsentToLocalStorage(consent) {
     localStorage.setItem(LOCAL_STORAGE_COOKIE_NAME, consent ? 'true' : 'false');
 }
 
@@ -146,32 +134,15 @@ function denyOrAllowAllCookieCategorySession(action) {
             }
         }
     }
-
-    const cookieConsentString = JSON.stringify(cookieConsentCategoryTypes);
-    // Serialize cookieConsentHolder object to JSON string
-    const cookieName = COOKIE_NAME;
-    const expirationDate = new Date();
-    expirationDate.setFullYear(expirationDate.getFullYear() + 1);
-    // Set the cookie with the serialized string as its value
-    document.cookie = `${cookieName}=${cookieConsentString}; expires=${expirationDate.toUTCString()}; path=/`;
-
+    storeCookieValue(cookieConsentCategoryTypes);
 }
 
 function initiateCookieCategorySession() {
     // Initialize cookie consent object
-    const cookieConsentCategoryTypes = COOKIE_CONSENT_CATEGORY_TYPES;
-
     if (document.cookie.indexOf(COOKIE_NAME) === -1) {
-        const cookieConsentString = JSON.stringify(cookieConsentCategoryTypes);
-        // Serialize cookieConsentHolder object to JSON string
-        const cookieName = COOKIE_NAME;
-        const expirationDate = new Date();
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
-        // Set the cookie with the serialized string as its value
-        document.cookie = `${cookieName}=${cookieConsentString}; expires=${expirationDate.toUTCString()}; path=/`;
+        storeCookieValue(COOKIE_CONSENT_CATEGORY_TYPES);
     }
 }
-
 
 function checkCookieCategorySession() {
     // Retrieve the value of the cookieConsent cookie
@@ -189,52 +160,98 @@ function checkCookieCategorySession() {
     }
 }
 
-function setCookieCategoryConsent(category) {
+function setCookieCategoryConsent(category, overWriteAction = null) {
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
+
     // If the cookie exists
     if (cookieConsentCookie) {
         const cookieConsentString = cookieConsentCookie.split('=')[1];
-        const cookieConsentObject = JSON.parse(cookieConsentString);
+        let cookieConsentObject = JSON.parse(cookieConsentString);
 
         // Update the corresponding property in the cookieConsentObject
-        const currentAction = !cookieConsentObject[category];
+        let currentAction = !cookieConsentObject[category];
+        if (overWriteAction !== null) {
+            currentAction = overWriteAction;
+        }
         cookieConsentObject[category] = currentAction;
 
-        //logic for gc
-        //bellow will always be true
-        if (category !== 'necessary') {
-            const gcCategory = 'gc';
-            let gcObject = COOKIE_CONSENT_CATEGORY_TYPES[gcCategory] || {};
-            for (const key in gcObject) {
-                if (Object.hasOwnProperty.call(COOKIE_CONSENT_CATEGORY_TYPES[gcCategory], key)) {
-                    // Check if the key is not in PARTNER_EXCEPTIONS
-                    if (!PARTNER_EXCEPTIONS.includes(key)) {
-                        // Set the value based on the action
-                        gcObject[key] = currentAction ? "granted" : "denied";
-                    } else {
-                        gcObject[key] ="granted";
-                    }
-                }
-            }
-            cookieConsentObject[gcCategory] = gcObject;
-        }
+        // Set consent for 'gc' category
+        setGCConsent(category, currentAction, cookieConsentObject);
+        console.log(cookieConsentObject);
 
-        // Serialize the updated object back to a string
-        const updatedCookieConsentString = JSON.stringify(cookieConsentObject);
-        const expirationDate = new Date();
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+        storeCookieValue(cookieConsentObject);
 
-        // Update the cookie with the updated string
-        document.cookie = `${COOKIE_NAME}=${updatedCookieConsentString}; expires=${expirationDate.toUTCString()}; path=/`;
         // Update the checked property of the corresponding checkbox input
         const checkbox = document.querySelector(`input[name="${category}"]`);
-
         if (checkbox) {
             checkbox.checked = cookieConsentObject[category];
         }
     }
 }
+
+function storeCookieValue(updatedObject) {
+    // Serialize the updated object back to a string
+    const updatedCookieConsentString = JSON.stringify(updatedObject);
+    const expirationDate = new Date();
+    expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+
+    // Update the cookie with the updated string
+    document.cookie = `${COOKIE_NAME}=${updatedCookieConsentString}; expires=${expirationDate.toUTCString()}; path=/`;
+}
+
+function setGCConsent(category, action, cookieConsentObject) {
+    console.log('enters here setGCConsent category:' + category);
+    console.log('enters here setGCConsent action:' + action);
+    const gcCategory = 'gc';
+    let gcObject = cookieConsentObject[gcCategory] || {};
+
+    if (COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE && category !== 'necessary') {
+        for (const key in gcObject) {
+            if (Object.hasOwnProperty.call(gcObject, key)) {
+                if (!PARTNER_EXCEPTIONS.includes(key)) {
+                    gcObject[key] = action ? "granted" : "denied";
+                } else {
+                    gcObject[key] = "granted";
+                }
+            }
+        }
+    } else {
+        if (category === 'preferences') {
+            console.log('should enter here if ' + category);
+            gcObject = updateCookieConsent(['ad_user_data', 'ad_personalization'], action, cookieConsentObject);
+        }
+        if (category === 'statistics') {
+            console.log('should enter here if ' + category);
+            gcObject = updateCookieConsent(['analytics_storage'], action, cookieConsentObject);
+        }
+        if (category === 'marketing') {
+            console.log('should enter here if ' + category);
+            gcObject = updateCookieConsent(['ad_storage'], action, cookieConsentObject);
+        }
+    }
+    console.log(gcObject);
+
+    cookieConsentObject[gcCategory] = gcObject;
+    return cookieConsentObject;
+}
+
+function updateCookieConsent(keysToUpdate, action, cookieConsentObject) {
+    console.log('enters here updateCookieConsent');
+    console.log(keysToUpdate);
+    console.log(action);
+    console.log(cookieConsentObject);
+    const gcCategory = 'gc';
+    let gcObject = cookieConsentObject[gcCategory] || {};
+
+    for (const key in cookieConsentObject[gcCategory]) {
+        if (Object.hasOwnProperty.call(cookieConsentObject[gcCategory], key) && keysToUpdate.includes(key)) {
+            gcObject[key] = action ? "granted" : "denied";
+        }
+    }
+    return gcObject;
+}
+
 
 function displayCookieConsentButton() {
     function getMaxZIndex() {
@@ -763,13 +780,13 @@ function displayCookieDetails() {
 
 // Function to deny cookies
 function acceptSelectionCookies() {
-    setCookieConsent(true);
+    setCookieConsentToLocalStorage(true);
     closeCookieModal();
 }
 
 // Function to deny all cookies
 function denyAllCookies() {
-    setCookieConsent(false);
+    setCookieConsentToLocalStorage(false);
     denyOrAllowAllCookieCategorySession(false);
 
     closeCookieModal();
@@ -777,7 +794,7 @@ function denyAllCookies() {
 
 // Function to allow all cookies
 function allowAllCookies() {
-    setCookieConsent(true);
+    setCookieConsentToLocalStorage(true);
     denyOrAllowAllCookieCategorySession(true);
     closeCookieModal();
 }
