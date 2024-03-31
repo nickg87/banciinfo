@@ -1,9 +1,10 @@
 const COOKIE_NAME = 'cookieConsentGlobalHolder';
 const LOCAL_STORAGE_COOKIE_NAME = 'cookieConsentGlobal';
-const WIDGET_MAIN_COLOR = '#1032cf';
+const LOCAL_STORAGE_COOKIE_SEND = 'cookieConsentGlobal_send';
+const WIDGET_MAIN_COLOR = '#2f9d08';
 const WIDGET_SECOND_COLOR = '#202020';
 const COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE = false;
-const COOKIE_CONSENT_ALLOW_ALL = true;
+const COOKIE_CONSENT_ALLOW_ALL = false;
 
 const COOKIE_CONSENT_GOOGLE_PARTNER = {
     ad_storage: COOKIE_CONSENT_ALLOW_ALL ? "granted" : "denied",
@@ -68,6 +69,21 @@ const svgCCookie = `<svg id="${COOKIE_NAME}-svg1" fill="#000" height="30px" widt
 
 
 
+// Define dataLayer and the gtag function.
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+
+// Set default consent to 'denied' as a placeholder
+// Determine actual values based on your own requirements
+gtag('consent', 'default', {
+    'analytics': "denied",
+    'analytics_storage': "denied",
+    'ad_storage': "denied",
+    'ad_user_data': "denied",
+    'ad_personalization': "denied"
+});
+
+
 // Check if the user has consented to cookies
 function addCustomFontForCookieConsent() {
 
@@ -105,6 +121,14 @@ function setCookieConsentToLocalStorage(consent) {
     localStorage.setItem(LOCAL_STORAGE_COOKIE_NAME, consent ? 'true' : 'false');
 }
 
+// Check if the user has sent consented to gtag
+function hasSendConsentedToCookies() {
+    return localStorage.getItem(LOCAL_STORAGE_COOKIE_SEND) === 'true';
+}
+// Set consent send for cookies into localStorage
+function setCookieSendConsentToLocalStorage(consent) {
+    localStorage.setItem(LOCAL_STORAGE_COOKIE_SEND, consent ? 'true' : 'false');
+}
 
 function denyOrAllowAllCookieCategorySession(action) {
     //console.log('enters here' + action);
@@ -141,6 +165,15 @@ function initiateCookieCategorySession() {
     // Initialize cookie consent object
     if (document.cookie.indexOf(COOKIE_NAME) === -1) {
         storeCookieValue(COOKIE_CONSENT_CATEGORY_TYPES);
+    } else {
+        //send gtag
+        //if (!hasSendConsentedToCookies()) {
+            //setCookieSendConsentToLocalStorage(true)
+            setTimeout(() => {
+                send_gtmConsentDataObject();
+            }, 500); // Adjust the delay as needed
+        //}
+
     }
 }
 
@@ -233,6 +266,8 @@ function setGCConsent(category, action, cookieConsentObject) {
     console.log(gcObject);
 
     cookieConsentObject[gcCategory] = gcObject;
+
+    //sendDummyDataToDataLayer();
     return cookieConsentObject;
 }
 
@@ -250,6 +285,76 @@ function updateCookieConsent(keysToUpdate, action, cookieConsentObject) {
         }
     }
     return gcObject;
+}
+
+
+function create_gtmConsentDataObject(gcObject, gtagType) {
+    console.log(gcObject);
+    if (gtagType) {
+        return  {
+            'analytics': gcObject?.analytics_storage,
+            'analytics_storage': gcObject?.analytics_storage,
+            'ad_storage': gcObject?.ad_storage,
+            'ad_user_data': gcObject?.ad_user_data,
+            'ad_personalization': gcObject?.ad_personalization
+        };
+    } else {
+        return  {
+            'analytics': {
+                'storage': gcObject?.analytics_storage  // Extract value from CMP
+            },
+            'ads': {
+                'storage': gcObject?.ad_storage,  // Extract value from CMP
+                'user_data': gcObject?.ad_user_data,  // Extract value from CMP (if applicable)
+                'personalization': gcObject?.ad_personalization  // Extract value from CMP (if applicable)
+            }
+        };
+    }
+}
+
+function send_gtmConsentDataObject() {
+    console.log('enters here XXXXXX send_gtmConsentDataObject: BEFORE PUSH');
+    console.log(window.dataLayer);
+    // Retrieve the value of the cookieConsent cookie
+    const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
+    let returnValue;
+
+    if (cookieConsentCookie) {
+        const cookieConsentString = cookieConsentCookie.split('=')[1];
+        const cookieConsentObject = JSON.parse(cookieConsentString);
+        if (cookieConsentObject.gc) {
+            const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc);
+            console.log(gtmConsent);
+            if ((document.querySelector('script[src*="gtm.js"]') || document.querySelector('script[src*="https://www.googletagmanager.com/gtag/js"]')) && window?.dataLayer !== undefined) {
+                // // Option 1: Update consent using dataLayer (recommended)
+                // returnValue = dataLayer.push({
+                //     'event': 'gtm.js',
+                //     'gtm.uniqueEventId': '{{Unique Event ID}}',
+                //     'gtm.triggers': '{{Trigger Firing Events}}',
+                //     'gtm.consent': gtmConsent
+                // });
+                // console.log('window.dataLayer in send_gtmConsentDataObject: AFTER PUSH');
+                // console.log(window.dataLayer);
+                // Option 2: Update consent using gtag (optional)
+                const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc, true);
+                returnValue = gtag('consent', 'update', gtmConsent);
+            } else {
+                returnValue = 'NO GTM!';
+                console.warn('GTM library is not loaded!');
+            }
+            return returnValue;
+        }
+    }
+}
+
+function sendDummyDataToDataLayer() {
+    console.log('enters here sendDummyDataToDataLayer');
+    console.log(window.dataLayer);
+    dataLayer.push({
+        'event': 'dummy_event', // Replace with your desired event name
+        'data1': 'some_data',
+        'data2': 'other_data'
+    });
 }
 
 
@@ -544,12 +649,12 @@ function displayCookieConsentModal() {
             outline: none;
             border-radius: 5px;
         }    
-        .___cookieConsent__consentButton.___cookieConsent__deny {
+        .___cookieConsent__consentButton.___cookieConsent__borderOnly {
             border: 1px solid ${WIDGET_MAIN_COLOR};
             color: ${WIDGET_MAIN_COLOR};
             background-color: unset !important;
         }     
-         .___cookieConsent__consentButton:hover, .___cookieConsent__deny:hover { 
+         .___cookieConsent__consentButton:hover, .___cookieConsent__borderOnly:hover { 
             background-color:  ${WIDGET_SECOND_COLOR} !important; 
             border: 1px solid ${WIDGET_SECOND_COLOR}; 
             color:white;
@@ -642,8 +747,8 @@ function displayCookieConsentModal() {
         </label>
     </div>`;
     const EXTENDED_LIST_BUTTONS = `
-        <button class="___cookieConsent__consentButton" onClick="allowAllCookies()">Accepta toate</button>
-        <button class="___cookieConsent__consentButton ___cookieConsent__deny" onClick="denyAllCookies()">Respinge toate</button>
+        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="allowAllCookies()">Accepta toate</button>
+        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="denyAllCookies()">Respinge toate</button>
     `;
 
     const SIMPLE_LIST = `
@@ -665,7 +770,7 @@ function displayCookieConsentModal() {
         </label>
     </div>`;
 
-    const SIMPLE_LIST_BUTTONS = `<button class="___cookieConsent__consentButton ___cookieConsent__deny" onclick="denyAllCookies()">Respinge toate</button>`;
+    const SIMPLE_LIST_BUTTONS = `<button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onclick="denyAllCookies()">Respinge toate</button>`;
 
     // Create cookie consent modal
     const modal = document.createElement('div');
@@ -699,14 +804,14 @@ function displayCookieConsentModal() {
                 </div>
             </div>
             <div id="___cookieConsent__footerButtons">
-                <button class="___cookieConsent__consentButton" onclick="acceptSelectionCookies()">Accepta selecția</button>
                 ${COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE ? SIMPLE_LIST_BUTTONS : EXTENDED_LIST_BUTTONS}
+                <button class="___cookieConsent__consentButton" onclick="acceptSelectionCookies()">Accepta selecția</button>
     </div>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
-    document.querySelector('h2#___cookieConsent__Title').insertAdjacentHTML('beforeend', svgCCookie);
+    //document.querySelector('h2#___cookieConsent__Title').insertAdjacentHTML('beforeend', svgCCookie);
     // Open the Consent tab by default
     showTab('___cookieConsent__Consent');
 }
@@ -781,14 +886,16 @@ function displayCookieDetails() {
 // Function to deny cookies
 function acceptSelectionCookies() {
     setCookieConsentToLocalStorage(true);
+    send_gtmConsentDataObject();
     closeCookieModal();
 }
 
 // Function to deny all cookies
 function denyAllCookies() {
     setCookieConsentToLocalStorage(false);
+    setCookieSendConsentToLocalStorage(false);
     denyOrAllowAllCookieCategorySession(false);
-
+    send_gtmConsentDataObject();
     closeCookieModal();
 }
 
@@ -796,6 +903,7 @@ function denyAllCookies() {
 function allowAllCookies() {
     setCookieConsentToLocalStorage(true);
     denyOrAllowAllCookieCategorySession(true);
+    send_gtmConsentDataObject();
     closeCookieModal();
 }
 
@@ -810,6 +918,16 @@ function showCookieConsentModal() {
 
 // Check if user has already consented to cookies
 window.onload = function () {
+    // gtag('consent', 'default',
+    //     {
+    //         'analytics': "denied",
+    //         'analytics_storage': "denied",
+    //         'ad_storage': "denied",
+    //         'ad_user_data': "denied",
+    //         'ad_personalization': "denied",
+    //         'wait_for_update': 500
+    //     });
+
     displayCookieConsentButton();
     if (!hasConsentedToCookies()) {
         displayCookieConsentModal();
@@ -819,6 +937,4 @@ window.onload = function () {
     setTimeout(() => {
         checkCookieCategorySession();
     }, 500); // Adjust the delay as needed
-
-
 };
