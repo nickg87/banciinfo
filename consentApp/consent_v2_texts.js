@@ -18,4 +18,4 @@ const despreText = {
     ],
 };
 
-//export {consimtamantText, despreText};
+export {consimtamantText, despreText};
