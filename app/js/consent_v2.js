@@ -313,8 +313,6 @@ function create_gtmConsentDataObject(gcObject, gtagType) {
 }
 
 function send_gtmConsentDataObject() {
-    console.log('enters here XXXXXX send_gtmConsentDataObject: BEFORE PUSH');
-    console.log(window.dataLayer);
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
     let returnValue;
@@ -323,8 +321,8 @@ function send_gtmConsentDataObject() {
         const cookieConsentString = cookieConsentCookie.split('=')[1];
         const cookieConsentObject = JSON.parse(cookieConsentString);
         if (cookieConsentObject.gc) {
-            const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc);
-            console.log(gtmConsent);
+            //const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc);
+            //console.log(gtmConsent);
             if ((document.querySelector('script[src*="gtm.js"]') || document.querySelector('script[src*="https://www.googletagmanager.com/gtag/js"]')) && window?.dataLayer !== undefined) {
                 // // Option 1: Update consent using dataLayer (recommended)
                 // returnValue = dataLayer.push({
@@ -375,32 +373,13 @@ function displayCookieConsentButton() {
 
     const CONSENT_MODAL_Z_INDEX = getMaxZIndex();
 
-    // Dynamically create style element for consent button
+    // Dynamically create style for root variables
     const style = document.createElement('style');
     style.textContent = `
-        #___cookieButtonConsent {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            height: 48px;
-            width: 48px;
-            border-radius: 50%;
-            padding: 0.5rem;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: rgba(255, 255, 255, 0.75);
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: ${CONSENT_MODAL_Z_INDEX}; /* Ensure the backdrop is behind the modal */
-        }
-        #___cookieButtonConsent:hover {
-        background-color: ${WIDGET_MAIN_COLOR};
-        }
-        
-        #___cookieButtonConsent:hover svg {
-            fill: #fff; /* Change the fill color of the SVG */
+        :root {
+            --WIDGET_MAIN_COLOR: ${WIDGET_MAIN_COLOR}; /* Replace with your actual color value */
+            --WIDGET_SECOND_COLOR: ${WIDGET_SECOND_COLOR}; /* Replace with your actual color value */
+            --CONSENT_MODAL_Z_INDEX: ${CONSENT_MODAL_Z_INDEX};  /* Ensure the backdrop is behind the modal */
         }
     `;
     // Append style element to the document head
@@ -417,294 +396,6 @@ function displayCookieConsentButton() {
 
 // Function to display cookie consent modal
 function displayCookieConsentModal() {
-
-
-    function getMaxZIndex() {
-        let maxZIndex = 0;
-        const allElements = document.querySelectorAll('*');
-
-        allElements.forEach(element => {
-            const zIndex = parseFloat(window.getComputedStyle(element).zIndex);
-            if (!isNaN(zIndex) && zIndex > maxZIndex) {
-                maxZIndex = zIndex;
-            }
-        });
-
-        return maxZIndex++;
-    }
-
-    const CONSENT_MODAL_Z_INDEX = getMaxZIndex();
-
-
-    // Dynamically create style element for toggle button styling
-    const style = document.createElement('style');
-    style.textContent = `
-        .___cookieConsent__ModalConsentBackdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(5px);
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black color */
-            z-index: ${CONSENT_MODAL_Z_INDEX}; /* Ensure the backdrop is behind the modal */
-        }
-        
-        #___cookieConsent__Title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            display: flex;
-            margin-bottom: 0.5rem;
-        }
-        
-        #___cookieConsent__Title svg {
-            margin-left: 0.5rem;
-            height: 30px;
-            width: 30px;
-            margin-top: -5px;
-            }
-    
-        #___cookieConsent__ModalConsent { 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            background-color: #fff; 
-            padding: 20px; 
-            border-radius: 15px;
-            box-shadow: 0px 0px 2rem rgba(0, 0, 0, 0.5); /* Add shadow */
-            width:50%; 
-            max-width: 800px !important; 
-            font-family: 'Roboto', sans-serif;
-            z-index:${CONSENT_MODAL_Z_INDEX}; 
-        }
-        
-        /* Media query for screens with maximum width of 768px (typical for mobile devices) */
-            @media screen and (max-width: 768px) {
-                #___cookieConsent__ModalConsent {
-                    position: fixed;
-                    top: unset;
-                    bottom: 0; 
-                    left: 0;
-                    width: 100%; /* Full width of the screen */
-                    height: auto; 
-                    max-height: 90%; 
-                    border-radius: 0px;
-                    box-shadow: none; /* remove shadow */
-                    overflow: auto;
-                    transform: none; /* Remove the centering transform */
-                }
-                #___cookieConsent__footerButtons {
-                    flex-direction: column;
-                }
-            }
-        
-        #___cookieConsent__CategoryButtonList {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping to next row if necessary */
-            justify-content: space-around;
-            margin: 1rem 0;
-        }
-        
-
-        
-         /* Updated CSS styles for toggle buttons */
-        .___cookieConsent__ToggleLabel {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            cursor: pointer;
-            margin-bottom: 10px; /* Add some space between toggle buttons */
-        }
-        
-        .___cookieConsent__ToggleLabel span {
-            margin-bottom: 10px; /* Add space between label text and toggle button */
-        }
-        .___cookieConsent__ToggleDivider { 
-            width: 1px; 
-            background:#ccc; 
-        }
-        
-        .___cookieConsent__Toggle {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-        
-        .___cookieConsent__Toggle:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        
-        .___cookieConsent__Toggle input {
-            display: none;
-        }
-        
-        .___cookieConsent__toggleInner {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            border-radius: 15px;
-            transition: all 0.3s;
-            z-index: 2;
-        }
-        
-        .___cookieConsent__toggleHolder {
-            position: absolute;
-            top:0;
-            z-index: 1;
-            width: 60px;
-            height: 30px;
-            border-radius: 15px;
-            transition: all 0.3s;
-        }
-        
-       /* For unchecked state */
-        .___cookieConsent__Toggle input:not(:checked) + .___cookieConsent__toggleHolder .___cookieConsent__toggleInner {
-            background-color: #fff;
-            width: 28px;
-            height: 28px;
-            margin-top: 1px;
-            margin-left: 1px;
-        }
-        
-        .___cookieConsent__Toggle input:not(:checked) + .___cookieConsent__toggleHolder {
-            background-color: lightgrey;
-        }
-        
-        /* For checked state */
-        .___cookieConsent__Toggle input:checked + .___cookieConsent__toggleHolder .___cookieConsent__toggleInner {
-            background-color: #fff;
-            width: 28px;
-            height: 28px;
-            margin-top: 1px;
-            margin-left: 30px;
-        }
-        
-        .___cookieConsent__Toggle input:checked + .___cookieConsent__toggleHolder {
-            background-color: ${WIDGET_MAIN_COLOR};
-        }
-        
-        
-        /* For disabled state */
-        .___cookieConsent__Toggle input:disabled + .___cookieConsent__toggleHolder .___cookieConsent__toggleInner {
-            background-color: #fff;
-            width: 28px;
-            height: 28px;
-            margin-top: 1px;
-            margin-left: 30px;
-        }
-        
-         .___cookieConsent__Toggle input:disabled + .___cookieConsent__toggleHolder {
-            background-color: black;
-        }
-        .___cookieConsent__Toggle input:disabled + .___cookieConsent__toggleHolder:hover {
-            cursor: not-allowed;
-        }
-
-        
-        #___cookieConsent__TabButtons, #___cookieConsent__footerButtons {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping to next row if necessary */
-            justify-content: space-around;
-        }
-        #___cookieConsent__footerButtons {gap:1rem; margin-top:1rem}
-        .___cookieConsent__Tab {
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: normal;
-            line-height: 1.5rem;
-            display: flex;
-            flex: 1 auto;
-            text-align: center;
-            justify-content: center;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid #ccc;
-            border-radius: 5px 5px 0 0;
-        }
-        .___cookieConsent__Tab:hover { cursor: pointer;}
-        .___cookieConsent__Tab.active {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-bottom: none;
-        }
-        .___cookieConsent__consentButton {
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: normal;
-            line-height: 1.5rem;
-            display: flex;
-            flex: 1 auto;
-            text-align: center;
-            justify-content: center;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: ${WIDGET_MAIN_COLOR};
-            border: 1px solid ${WIDGET_MAIN_COLOR};
-            color:white;
-            outline: none;
-            border-radius: 5px;
-        }    
-        .___cookieConsent__consentButton.___cookieConsent__borderOnly {
-            border: 1px solid ${WIDGET_MAIN_COLOR};
-            color: ${WIDGET_MAIN_COLOR};
-            background-color: unset !important;
-        }     
-         .___cookieConsent__consentButton:hover, .___cookieConsent__borderOnly:hover { 
-            background-color:  ${WIDGET_SECOND_COLOR} !important; 
-            border: 1px solid ${WIDGET_SECOND_COLOR}; 
-            color:white;
-            cursor: pointer;
-        }   
-        
-        #___cookieConsent__TabContent {
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: normal;
-            line-height: 1.5rem;
-            padding: 1rem;
-            border: 1px solid #ccc;
-            border-top: none;
-        }
-        #___cookieConsent__TabContent b {
-            font-weight: 700;
-        }
-        
-        #___cookieConsent__Wrapper, #___cookieConsent__AboutTab div, #___cookieConsent__ConsentTab {
-        overflow-x:auto;
-        max-height:50vh;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-        }
-        
-        #___cookieConsent__Wrapper, #___cookieConsent__AboutTab div {
-        padding-bottom:1rem;
-        }
-        
-        #___cookieConsent__Wrapper::-webkit-scrollbar, #___cookieConsent__AboutTab::-webkit-scrollbar, #___cookieConsent__ConsentTab::-webkit-scrollbar {
-        display: none; 
-        }
-        
-        /* Add white transparent gradient at the bottom */
-        #___cookieConsent__DetailsTab, #___cookieConsent__AboutTab {
-          position: relative; /* Ensure position context for the gradient */
-        }
-        #___cookieConsent__DetailsTab::after, #___cookieConsent__AboutTab::after {
-          content: '';
-          position: absolute;
-          bottom: -5px;
-          left: 0;
-          width: 100%;
-          height: 40px; /* Adjust height as needed */
-          background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1)); /* White transparent gradient */
-        }
-    `;
-    // Append style element to the document head
-    document.head.appendChild(style);
 
     // Create backdrop element
     const backdrop = document.createElement('div');
