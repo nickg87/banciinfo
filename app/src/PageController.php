@@ -42,7 +42,7 @@ namespace {
 //                Requirements::javascript($runtimeFile, [ 'async' => true]);
 //            }
 
-            $runtimeFile = 'app/js/consent_bundle.js';
+            $runtimeFile = 'app/js/dist/consent_bundle.js';
             $absolutePath = BASE_PATH . '/' . $runtimeFile;
             if (file_exists(ModuleResourceLoader::singleton()->resolvePath($absolutePath))) {
                 Requirements::javascript($runtimeFile, [ 'async' => true]);

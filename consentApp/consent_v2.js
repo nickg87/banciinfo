@@ -68,24 +68,26 @@ const svgCCookie = `<svg id="${COOKIE_NAME}-svg1" fill="#000" height="30px" widt
                         </svg>`;
 
 
-
 // Define dataLayer and the gtag function.
 window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
 
 // Set default consent to 'denied' as a placeholder
 // Determine actual values based on your own requirements
-gtag('consent', 'default', {
-    'analytics': "denied",
-    'analytics_storage': "denied",
-    'ad_storage': "denied",
-    'ad_user_data': "denied",
-    'ad_personalization': "denied"
-});
+if (typeof window.gtag === 'function') {
+    window.gtag('consent', 'default', {
+        'analytics': "denied",
+        'analytics_storage': "denied",
+        'ad_storage': "denied",
+        'ad_user_data': "denied",
+        'ad_personalization': "denied"
+    });
+} else {
+    console.warn('window.gtag is not defined or is not a function.');
+}
 
 
 // Check if the user has consented to cookies
-function addCustomFontForCookieConsent() {
+window.cg__addCustomFontForCookieConsent = () => {
 
     if (!document.getElementById('___cookieConsent_roboto_font_link')) {
         // Create a link element
@@ -112,25 +114,26 @@ function addCustomFontForCookieConsent() {
 
 
 // Check if the user has consented to cookies
-function hasConsentedToCookies() {
+window.cg__hasConsentedToCookies = () => {
     return localStorage.getItem(LOCAL_STORAGE_COOKIE_NAME) === 'true';
 }
 
 // Set consent for cookies into localStorage
-function setCookieConsentToLocalStorage(consent) {
+window.cg__setCookieConsentToLocalStorage = (consent) => {
     localStorage.setItem(LOCAL_STORAGE_COOKIE_NAME, consent ? 'true' : 'false');
 }
 
 // Check if the user has sent consented to gtag
-function hasSendConsentedToCookies() {
+window.cg__hasSendConsentedToCookies = () => {
     return localStorage.getItem(LOCAL_STORAGE_COOKIE_SEND) === 'true';
 }
+
 // Set consent send for cookies into localStorage
-function setCookieSendConsentToLocalStorage(consent) {
+window.cg__setCookieSendConsentToLocalStorage = (consent) => {
     localStorage.setItem(LOCAL_STORAGE_COOKIE_SEND, consent ? 'true' : 'false');
 }
 
-function denyOrAllowAllCookieCategorySession(action) {
+window.cg__denyOrAllowAllCookieCategorySession = (action) => {
     // Initialize cookie consent object
     const cookieConsentCategoryTypes = {};
 
@@ -146,7 +149,7 @@ function denyOrAllowAllCookieCategorySession(action) {
                                 // Set the value based on the action
                                 gcObject[key] = action ? "granted" : "denied";
                             } else {
-                                gcObject[key] ="granted";
+                                gcObject[key] = "granted";
                             }
                         }
                     }
@@ -157,26 +160,26 @@ function denyOrAllowAllCookieCategorySession(action) {
             }
         }
     }
-    storeCookieValue(cookieConsentCategoryTypes);
+    window.cg__storeCookieValue(cookieConsentCategoryTypes);
 }
 
-function initiateCookieCategorySession() {
+window.cg__initiateCookieCategorySession = () => {
     // Initialize cookie consent object
     if (document.cookie.indexOf(COOKIE_NAME) === -1) {
-        storeCookieValue(COOKIE_CONSENT_CATEGORY_TYPES);
+        window.cg__storeCookieValue(COOKIE_CONSENT_CATEGORY_TYPES);
     } else {
         //send gtag
         //if (!hasSendConsentedToCookies()) {
-            //setCookieSendConsentToLocalStorage(true)
-            setTimeout(() => {
-                send_gtmConsentDataObject();
-            }, 500); // Adjust the delay as needed
+        //setCookieSendConsentToLocalStorage(true)
+        setTimeout(() => {
+            window.cg__send_gtmConsentDataObject();
+        }, 500); // Adjust the delay as needed
         //}
 
     }
 }
 
-function checkCookieCategorySession() {
+window.cg__checkCookieCategorySession = () => {
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
     // If the cookie exists
@@ -192,7 +195,7 @@ function checkCookieCategorySession() {
     }
 }
 
-function setCookieCategoryConsent(category, overWriteAction = null) {
+window.cg__setCookieCategoryConsent = (category, overWriteAction = null) => {
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
 
@@ -209,10 +212,10 @@ function setCookieCategoryConsent(category, overWriteAction = null) {
         cookieConsentObject[category] = currentAction;
 
         // Set consent for 'gc' category
-        setGCConsent(category, currentAction, cookieConsentObject);
+        window.cg__setGCConsent(category, currentAction, cookieConsentObject);
         console.log(cookieConsentObject);
 
-        storeCookieValue(cookieConsentObject);
+        window.cg__storeCookieValue(cookieConsentObject);
 
         // Update the checked property of the corresponding checkbox input
         const checkbox = document.querySelector(`input[name="${category}"]`);
@@ -222,7 +225,7 @@ function setCookieCategoryConsent(category, overWriteAction = null) {
     }
 }
 
-function storeCookieValue(updatedObject) {
+window.cg__storeCookieValue = (updatedObject) => {
     // Serialize the updated object back to a string
     const updatedCookieConsentString = JSON.stringify(updatedObject);
     const expirationDate = new Date();
@@ -232,7 +235,7 @@ function storeCookieValue(updatedObject) {
     document.cookie = `${COOKIE_NAME}=${updatedCookieConsentString}; expires=${expirationDate.toUTCString()}; path=/`;
 }
 
-function setGCConsent(category, action, cookieConsentObject) {
+window.cg__setGCConsent = (category, action, cookieConsentObject) => {
     console.log('enters here setGCConsent category:' + category);
     console.log('enters here setGCConsent action:' + action);
     const gcCategory = 'gc';
@@ -251,15 +254,15 @@ function setGCConsent(category, action, cookieConsentObject) {
     } else {
         if (category === 'preferences') {
             console.log('should enter here if ' + category);
-            gcObject = updateCookieConsent(['ad_user_data', 'ad_personalization'], action, cookieConsentObject);
+            gcObject = window.cg__updateCookieConsent(['ad_user_data', 'ad_personalization'], action, cookieConsentObject);
         }
         if (category === 'statistics') {
             console.log('should enter here if ' + category);
-            gcObject = updateCookieConsent(['analytics_storage'], action, cookieConsentObject);
+            gcObject = window.cg__updateCookieConsent(['analytics_storage'], action, cookieConsentObject);
         }
         if (category === 'marketing') {
             console.log('should enter here if ' + category);
-            gcObject = updateCookieConsent(['ad_storage'], action, cookieConsentObject);
+            gcObject = window.cg__updateCookieConsent(['ad_storage'], action, cookieConsentObject);
         }
     }
     console.log(gcObject);
@@ -269,7 +272,7 @@ function setGCConsent(category, action, cookieConsentObject) {
     return cookieConsentObject;
 }
 
-function updateCookieConsent(keysToUpdate, action, cookieConsentObject) {
+window.cg__updateCookieConsent = (keysToUpdate, action, cookieConsentObject) => {
     const gcCategory = 'gc';
     let gcObject = cookieConsentObject[gcCategory] || {};
 
@@ -282,9 +285,9 @@ function updateCookieConsent(keysToUpdate, action, cookieConsentObject) {
 }
 
 
-function create_gtmConsentDataObject(gcObject, gtagType) {
+window.cg__create_gtmConsentDataObject = (gcObject, gtagType) => {
     if (gtagType) {
-        return  {
+        return {
             'analytics': gcObject?.analytics_storage,
             'analytics_storage': gcObject?.analytics_storage,
             'ad_storage': gcObject?.ad_storage,
@@ -292,7 +295,7 @@ function create_gtmConsentDataObject(gcObject, gtagType) {
             'ad_personalization': gcObject?.ad_personalization
         };
     } else {
-        return  {
+        return {
             'analytics': {
                 'storage': gcObject?.analytics_storage  // Extract value from CMP
             },
@@ -305,7 +308,7 @@ function create_gtmConsentDataObject(gcObject, gtagType) {
     }
 }
 
-function send_gtmConsentDataObject() {
+window.cg__send_gtmConsentDataObject = () => {
     // Retrieve the value of the cookieConsent cookie
     const cookieConsentCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith(COOKIE_NAME + '='));
     let returnValue;
@@ -314,7 +317,7 @@ function send_gtmConsentDataObject() {
         const cookieConsentString = cookieConsentCookie.split('=')[1];
         const cookieConsentObject = JSON.parse(cookieConsentString);
         if (cookieConsentObject.gc) {
-            //const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc);
+            //const gtmConsent = window.cg__create_gtmConsentDataObject(cookieConsentObject.gc);
             //console.log(gtmConsent);
             if ((document.querySelector('script[src*="gtm.js"]') || document.querySelector('script[src*="https://www.googletagmanager.com/gtag/js"]')) && window?.dataLayer !== undefined) {
                 // // Option 1: Update consent using dataLayer (recommended)
@@ -327,7 +330,7 @@ function send_gtmConsentDataObject() {
                 // console.log('window.dataLayer in send_gtmConsentDataObject: AFTER PUSH');
                 // console.log(window.dataLayer);
                 // Option 2: Update consent using gtag (optional)
-                const gtmConsent = create_gtmConsentDataObject(cookieConsentObject.gc, true);
+                const gtmConsent = window.cg__create_gtmConsentDataObject(cookieConsentObject.gc, true);
                 returnValue = gtag('consent', 'update', gtmConsent);
             } else {
                 returnValue = 'NO GTM!';
@@ -338,8 +341,8 @@ function send_gtmConsentDataObject() {
     }
 }
 
-function displayCookieConsentButton() {
-    function getMaxZIndex() {
+window.cg__displayCookieConsentButton = () => {
+    window.cg__getMaxZIndex = () => {
         let maxZIndex = 0;
         const allElements = document.querySelectorAll('*');
 
@@ -353,7 +356,7 @@ function displayCookieConsentButton() {
         return maxZIndex++;
     }
 
-    const CONSENT_MODAL_Z_INDEX = getMaxZIndex();
+    const CONSENT_MODAL_Z_INDEX = window.cg__getMaxZIndex();
 
     // Dynamically create style for root variables
     const style = document.createElement('style');
@@ -370,14 +373,14 @@ function displayCookieConsentButton() {
     // Create cookie consent button
     const cookieConsentButton = document.createElement('div');
     cookieConsentButton.innerHTML = `
-        <div id="___cookieButtonConsent" onclick="showCookieConsentModal()"></div>
+        <div id="___cookieButtonConsent" onclick="window.cg__showCookieConsentModal()"></div>
     `;
     document.body.appendChild(cookieConsentButton);
     document.querySelector('div#___cookieButtonConsent').insertAdjacentHTML('beforeend', svgCCookie);
 }
 
 // Function to display cookie consent modal
-function displayCookieConsentModal() {
+window.cg__displayCookieConsentModal = () => {
 
     // Create backdrop element
     const backdrop = document.createElement('div');
@@ -399,7 +402,7 @@ function displayCookieConsentModal() {
             <span>Preferinte</span>
             <div class="___cookieConsent__Toggle">
                 <input type="checkbox" id="___cookieConsent__Preferences" name="___cookieConsent__Preferences" value="preferences">
-                <div class="___cookieConsent__toggleHolder" onclick="setCookieCategoryConsent('preferences')"><div class="___cookieConsent__toggleInner"></div></div>
+                <div class="___cookieConsent__toggleHolder" onclick="window.cg__setCookieCategoryConsent('preferences')"><div class="___cookieConsent__toggleInner"></div></div>
             </div>
         </label>
         <div class="___cookieConsent__ToggleDivider"></div>
@@ -407,7 +410,7 @@ function displayCookieConsentModal() {
             <span>Statistici</span>
             <div class="___cookieConsent__Toggle">
                 <input type="checkbox" id="___cookieConsent__Statistics" name="___cookieConsent__Statistics" value="statistics">
-                <div class="___cookieConsent__toggleHolder" onclick="setCookieCategoryConsent('statistics')"><div class="___cookieConsent__toggleInner"></div></div>
+                <div class="___cookieConsent__toggleHolder" onclick="window.cg__setCookieCategoryConsent('statistics')"><div class="___cookieConsent__toggleInner"></div></div>
             </div>
         </label>
         <div class="___cookieConsent__ToggleDivider"></div>
@@ -415,13 +418,13 @@ function displayCookieConsentModal() {
             <span>Marketing</span>
             <div class="___cookieConsent__Toggle">
                 <input type="checkbox" id="___cookieConsent__Marketing" name="___cookieConsent__Marketing" value="marketing">
-                <div class="___cookieConsent__toggleHolder" onclick="setCookieCategoryConsent('marketing')"><div class="___cookieConsent__toggleInner"></div></div>
+                <div class="___cookieConsent__toggleHolder" onclick="window.cg__setCookieCategoryConsent('marketing')"><div class="___cookieConsent__toggleInner"></div></div>
             </div>
         </label>
     </div>`;
     const EXTENDED_LIST_BUTTONS = `
-        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="allowAllCookies()">Accepta toate</button>
-        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="denyAllCookies()">Respinge toate</button>
+        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="window.cg__allowAllCookies()">Accepta toate</button>
+        <button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onClick="window.cg__denyAllCookies()">Respinge toate</button>
     `;
 
     const SIMPLE_LIST = `
@@ -438,12 +441,12 @@ function displayCookieConsentModal() {
             <span>Opționale</span>
             <div class="___cookieConsent__Toggle">
                 <input type="checkbox" id="___cookieConsent__Optional" name="___cookieConsent__Optional" value="optional">
-                <div class="___cookieConsent__toggleHolder" onclick="setCookieCategoryConsent('optional')"><div class="___cookieConsent__toggleInner"></div></div>
+                <div class="___cookieConsent__toggleHolder" onclick="window.cg__setCookieCategoryConsent('optional')"><div class="___cookieConsent__toggleInner"></div></div>
             </div>
         </label>
     </div>`;
 
-    const SIMPLE_LIST_BUTTONS = `<button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onclick="denyAllCookies()">Respinge toate</button>`;
+    const SIMPLE_LIST_BUTTONS = `<button class="___cookieConsent__consentButton ___cookieConsent__borderOnly" onclick="window.cg__denyAllCookies()">Respinge toate</button>`;
 
     // Create cookie consent modal
     const modal = document.createElement('div');
@@ -452,9 +455,9 @@ function displayCookieConsentModal() {
             <div id="___cookieConsent__ModalWrapper">
             <h2 id="___cookieConsent__Title">Folosim cookies</h2>
             <div id="___cookieConsent__TabButtons">
-                <div class="___cookieConsent__Tab" onclick="showTab('___cookieConsent__Consent')" id="___cookieConsent__ConsentTabButton">${consimtamantText?.title}</div>
-                <div class="___cookieConsent__Tab" onclick="showTab('___cookieConsent__Details')" id="___cookieConsent__DetailsTabButton">Detalii</div>
-                <div class="___cookieConsent__Tab" onclick="showTab('___cookieConsent__About')" id="___cookieConsent__AboutTabButton">${despreText?.title}</div>
+                <div class="___cookieConsent__Tab" onclick="window.cg__showTab('___cookieConsent__Consent')" id="___cookieConsent__ConsentTabButton">${consimtamantText?.title}</div>
+                <div class="___cookieConsent__Tab" onclick="window.cg__showTab('___cookieConsent__Details')" id="___cookieConsent__DetailsTabButton">Detalii</div>
+                <div class="___cookieConsent__Tab" onclick="window.cg__showTab('___cookieConsent__About')" id="___cookieConsent__AboutTabButton">${despreText?.title}</div>
             </div>
             <div id="___cookieConsent__TabContent">
                 <div id="___cookieConsent__ConsentTab">
@@ -473,7 +476,7 @@ function displayCookieConsentModal() {
             </div>
             <div id="___cookieConsent__footerButtons">
                 ${COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE ? SIMPLE_LIST_BUTTONS : EXTENDED_LIST_BUTTONS}
-                <button class="___cookieConsent__consentButton" onclick="acceptSelectionCookies()">Accepta selecția</button>
+                <button class="___cookieConsent__consentButton" onclick="window.cg__acceptSelectionCookies()">Accepta selecția</button>
     </div>
         </div>
       </div>
@@ -481,17 +484,17 @@ function displayCookieConsentModal() {
     document.body.appendChild(modal);
     //document.querySelector('h2#___cookieConsent__Title').insertAdjacentHTML('beforeend', svgCCookie);
     // Open the Consent tab by default
-    showTab('___cookieConsent__Consent');
+    window.cg__showTab('___cookieConsent__Consent');
 }
 
 // Function to close cookie consent modal
-function closeCookieModal() {
+window.cg__closeCookieModal = () => {
     document.getElementById('___cookieConsent__ModalConsent').remove();
     document.getElementById('___cookieConsentBackdrop').remove();
 }
 
 // Function to show a specific tab in the cookie consent modal
-function showTab(tabName) {
+window.cg__showTab = (tabName) => {
     //console.log(tabName)
     const tabButtons = document.querySelectorAll('.___cookieConsent__Tab');
     tabButtons.forEach(tabButton => {
@@ -509,20 +512,20 @@ function showTab(tabName) {
 
     // If Details tab is shown, display cookie details
     if (tabName === '___cookieConsent__Details') {
-        displayCookieDetails();
+        window.cg__displayCookieDetails();
     }
 }
 
 
 // Function to read current cookies and display them in the Details tab
-function displayCookieDetails() {
+window.cg__displayCookieDetails = () => {
     let cookies = document.cookie.split(';'); // Split cookies into an array
     //console.log(cookies);
 
     let cookieDetailsHtml = ''; // Variable to store the HTML for the cookie details
 
     // Loop through each cookie
-    cookies.forEach(function (cookie) {
+    cookies.forEach((cookie) => {
         // Trim any leading or trailing whitespace
         cookie = cookie.trim();
 
@@ -537,7 +540,7 @@ function displayCookieDetails() {
             type = 'necessary';
         } else if (name === 'PHPSESSID') {
             type = 'necessary';
-        }  else {
+        } else {
             // Add logic to determine other types based on cookie name or value if needed
             type = 'optional';
         }
@@ -553,90 +556,47 @@ function displayCookieDetails() {
 }
 
 // Function to deny cookies
-function acceptSelectionCookies() {
-    setCookieConsentToLocalStorage(true);
-    send_gtmConsentDataObject();
-    closeCookieModal();
+window.cg__acceptSelectionCookies = () => {
+    window.cg__setCookieConsentToLocalStorage(true);
+    window.cg__send_gtmConsentDataObject();
+    window.cg__closeCookieModal();
 }
 
 // Function to deny all cookies
-function denyAllCookies() {
-    setCookieConsentToLocalStorage(false);
-    setCookieSendConsentToLocalStorage(false);
-    denyOrAllowAllCookieCategorySession(false);
-    send_gtmConsentDataObject();
-    closeCookieModal();
+window.cg__denyAllCookies = () => {
+    window.cg__setCookieConsentToLocalStorage(false);
+    window.cg__setCookieSendConsentToLocalStorage(false);
+    window.cg__denyOrAllowAllCookieCategorySession(false);
+    window.cg__send_gtmConsentDataObject();
+    window.cg__closeCookieModal();
 }
 
 // Function to allow all cookies
-function allowAllCookies() {
-    setCookieConsentToLocalStorage(true);
-    denyOrAllowAllCookieCategorySession(true);
-    send_gtmConsentDataObject();
-    closeCookieModal();
+window.cg__allowAllCookies = () => {
+    window.cg__setCookieConsentToLocalStorage(true);
+    window.cg__denyOrAllowAllCookieCategorySession(true);
+    window.cg__send_gtmConsentDataObject();
+    window.cg__closeCookieModal();
 }
 
 // Function to show modal from button
-function showCookieConsentModal() {
-    addCustomFontForCookieConsent();
-    displayCookieConsentModal();
+window.cg__showCookieConsentModal = () => {
+    window.cg__addCustomFontForCookieConsent();
+    window.cg__displayCookieConsentModal();
     setTimeout(() => {
-        checkCookieCategorySession();
+        window.cg__checkCookieCategorySession();
     }, 500); // Adjust the delay as needed
 }
 
 // Check if user has already consented to cookies
-window.onload = function () {
-    displayCookieConsentButton();
-    if (!hasConsentedToCookies()) {
-        displayCookieConsentModal();
-        addCustomFontForCookieConsent();
+window.onload = () => {
+    window.cg__displayCookieConsentButton();
+    if (!window.cg__hasConsentedToCookies()) {
+        window.cg__displayCookieConsentModal();
+        window.cg__addCustomFontForCookieConsent();
     }
-    initiateCookieCategorySession();
+    window.cg__initiateCookieCategorySession();
     setTimeout(() => {
-        checkCookieCategorySession();
+        window.cg__checkCookieCategorySession();
     }, 500); // Adjust the delay as needed
-};
-
-
-
-
-export {
-    COOKIE_NAME,
-    LOCAL_STORAGE_COOKIE_NAME,
-    LOCAL_STORAGE_COOKIE_SEND,
-    WIDGET_MAIN_COLOR,
-    WIDGET_SECOND_COLOR,
-    COOKIE_CONSENT_CATEGORY_SIMPLE_TYPE,
-    COOKIE_CONSENT_ALLOW_ALL,
-    COOKIE_CONSENT_GOOGLE_PARTNER,
-    PARTNER_EXCEPTIONS,
-    COOKIE_CONSENT_CATEGORY_TYPES_EXTENDED,
-    COOKIE_CONSENT_CATEGORY_TYPES_SIMPLE,
-    COOKIE_CONSENT_CATEGORY_TYPES,
-    svgCCookie,
-    gtag,
-    addCustomFontForCookieConsent,
-    hasConsentedToCookies,
-    setCookieConsentToLocalStorage,
-    hasSendConsentedToCookies,
-    setCookieSendConsentToLocalStorage,
-    denyOrAllowAllCookieCategorySession,
-    initiateCookieCategorySession,
-    checkCookieCategorySession,
-    setCookieCategoryConsent,
-    storeCookieValue,
-    setGCConsent,
-    updateCookieConsent,
-    create_gtmConsentDataObject,
-    send_gtmConsentDataObject,
-    displayCookieConsentButton,
-    displayCookieConsentModal,
-    closeCookieModal,
-    showTab,
-    displayCookieDetails,
-    acceptSelectionCookies,
-    denyAllCookies,
-    allowAllCookies,
-    showCookieConsentModal
 };
