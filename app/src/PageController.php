@@ -30,10 +30,29 @@ namespace {
             parent::init();
             // You can include any CSS or JS required by your project here.
             // See: https://docs.silverstripe.org/en/developer_guides/templates/requirements/
-            $runtimeFile = 'app/js/consent_v2.js';
+            $runtimeFile = 'app/js/consent_v2_texts.js';
             $absolutePath = BASE_PATH . '/' . $runtimeFile;
             if (file_exists(ModuleResourceLoader::singleton()->resolvePath($absolutePath))) {
-                Requirements::javascript($runtimeFile);
+                Requirements::javascript($runtimeFile, [ 'async' => true]);
+            }
+
+//            $runtimeFile = 'app/js/consent_v2.js';
+//            $absolutePath = BASE_PATH . '/' . $runtimeFile;
+//            if (file_exists(ModuleResourceLoader::singleton()->resolvePath($absolutePath))) {
+//                Requirements::javascript($runtimeFile, [ 'async' => true]);
+//            }
+
+            $runtimeFile = 'app/js/consent_bundle.js';
+            $absolutePath = BASE_PATH . '/' . $runtimeFile;
+            if (file_exists(ModuleResourceLoader::singleton()->resolvePath($absolutePath))) {
+                Requirements::javascript($runtimeFile, [ 'async' => true]);
+            }
+
+
+            $runtimeFile = 'app/css/consent_v2.css';
+            $absolutePath = BASE_PATH . '/' . $runtimeFile;
+            if (file_exists(ModuleResourceLoader::singleton()->resolvePath($absolutePath))) {
+                Requirements::css($runtimeFile);
             }
         }
     }

@@ -12,6 +12,7 @@ test.php
 /themes/simple/
 /_resources/
 /public/_resources/
+/consentApp/node_modules/
 /.graphql-generated/
 /public/_graphql/
 composer.lock
