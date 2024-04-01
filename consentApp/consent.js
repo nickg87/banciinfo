@@ -1,4 +1,5 @@
-import { consimtamantText, despreText } from './consent_v2_texts.js';
+import { consimtamantText, despreText } from './consent_texts.js';
+import './consent_styles.css';
 
 const COOKIE_NAME = 'cookieConsentGlobalHolder';
 const LOCAL_STORAGE_COOKIE_NAME = 'cookieConsentGlobal';
